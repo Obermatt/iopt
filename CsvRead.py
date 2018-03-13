@@ -1,3 +1,4 @@
+# Reading csv data for charts
 import os
 import csv
 import sys
@@ -13,6 +14,8 @@ def readData():
 	arrFirst = []
 	arrTwo = []
 	arrThree = []
+	arrFour = []
+	arrFive = []
 	finalArr	= {}
 	perExist = False
 	with open(filename,'rt') as file: # Read CSV file
@@ -20,19 +23,35 @@ def readData():
 		data=list(reader)
 		
 		for csvRow in data:
-			csvRowCount = csvRowCount + 1 #Auto increament			
+			#Auto increament	
+			csvRowCount = csvRowCount + 1 		
 			if csvRowCount == 1:
-				arrFirst = csvRow[:-1] #X axis value escape last row
+				#X axis value escape last 3 row
+				arrFirst = csvRow[:-3] 
 				continue
-			arrTwo.append(csvRow[len(csvRow) - 1]) # Legend name						
-			if any("%" in str for str in csvRow): #to check value is in percentage format or normal format
-				perExist = True # if percentage value exist in CSV file
-			csvRow = [w.replace('%', '') for w in csvRow] # replace % from the value
-			arrThree.append(csvRow[:-1]) # Line multidimentional value
+			# All Legend name
+			arrTwo.append(csvRow[len(csvRow) - 3])
+ 			# cutomized Legend text
+			arrFour.append(csvRow[len(csvRow) - 2]) 
+			# chart title
+			arrFive.append(csvRow[len(csvRow) - 1]) 
+			#to check value is in percentage format or normal format			
+			if any("%" in str for str in csvRow): 
+				# if percentage value exist in CSV file
+				perExist = True 
+			# replace % from the value
+			csvRow = [w.replace('%', '') for w in csvRow] 
+			# Line multidimentional value
+			arrThree.append(csvRow[:-3]) 
+			
 		
 		finalArr['xAxisName'] = arrFirst
 		finalArr['legendName'] = arrTwo
-		finalArr['axisValue'] = arrThree 
+		finalArr['axisValue'] = arrThree
+		finalArr['axisfigtext'] = arrFour
+		finalArr['title'] = arrFive  
 		finalArr['perExist'] = perExist
-		
-	return finalArr #final return done
+	#final return done	
+	return finalArr 
+
+## End of program
