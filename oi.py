@@ -2,6 +2,7 @@
 
 #importing required files and libraries
 import os
+import matplotlib
 import matplotlib.pyplot as plt 
 import numpy as np  
 import sys
@@ -21,7 +22,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 #Change format option to svg or png
-PRINT_FORMAT = "png"   
+PRINT_FORMAT = "svg"   
 
 
 try:
@@ -30,13 +31,13 @@ try:
 	import ParamValidator as prmValid 
 	ReadData = CsvData.readData() # read CSV data
 
-	##setting font (this is not working at this moment -- Commenting for now	
- 
-		#fontpath = 'EBGaramond12-Italic.ttf'
-	
-		#prop = font_manager.FontProperties(fname=fontpath)
-		#plt.rcParams['font.family'] = prop.get_name()
-
+	##Start of font setting
+	matplotlib.font_manager._rebuild()
+	fontpath = 'EBGaramond12-Regular.ttf'
+	prop = font_manager.FontProperties(fname=fontpath)
+	titlefont = {'fontname':prop.get_name()}
+	legendfont = prop.get_name()
+	plt.rcParams['font.family'] = 'Arial'
 	##End of font setting
 
 	now = datetime.datetime.now()
@@ -173,8 +174,9 @@ try:
 	vals = ax.get_yticks()
 	#converted values into percentage value
 	ax.set_yticklabels([percentageFormat.format(x) for x in vals],fontsize=numberFontSize) 
-	# Set title	
-	plt.title(titleName,loc='left',fontsize=titleSize,fontweight="bold")
+	# Set title
+	csfont = {'fontname':'EB Garamond'}	
+	plt.title(titleName,loc='left',fontsize=titleSize,fontweight="bold",**titlefont)
 
 	fig = plt.gcf()
 
@@ -211,13 +213,13 @@ try:
 		    color='#91ccd1', weight='ultralight', size='3')
 	plt.figtext(0.23, 0.06, legendtext1,
 		    backgroundcolor='#ffffff',
-		    color='black', weight='normal', size='10')
+		    color='black', weight='normal', size='11',family=legendfont)
 	plt.figtext(0.12, 0.02, '-------------------------------O--------------------- -------------------------- ------------------------  ------------------------- ------------------------- ',
 		    backgroundcolor='#ff7800', color='#ff7800', weight='normal',
 		    size='1')
 	
 	plt.legend(((m2,m3),m4), ('', legendtext2), numpoints=1, labelspacing=2,
-          loc='center', fontsize=10.0,bbox_to_anchor=(0.165, -0.195),handlelength=5,frameon=False)
+          loc='center', fontsize=11.0,bbox_to_anchor=(0.14, -0.199),handlelength=6,frameon=False,prop={'family':legendfont})
 
 	# End of designing custome legends 
 	
