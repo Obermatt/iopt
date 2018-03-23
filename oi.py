@@ -13,7 +13,7 @@ from matplotlib.legend_handler import (HandlerLineCollection,
                                        HandlerTuple)
 import matplotlib.collections as mcol
 from matplotlib.lines import Line2D
-
+import legend_handler as CustomeLegend
 # importing font manager
 import matplotlib.font_manager as font_manager 
 
@@ -22,7 +22,16 @@ import warnings
 warnings.filterwarnings("ignore")
 
 #Change format option to svg or png
-PRINT_FORMAT = "svg"   
+PRINT_FORMAT = "png"   
+COMPANY_PERFORMANCE_LINE = "s" #straight line  // i #interpolated
+
+#python oi.py sample.csv svg s p t
+
+#defining colorcodes
+lightskyblue_obermatt = '#afdce3'
+darkskyblue_obermatt = '#91ccd1'
+blue_obermatt = '#2e91ad'
+orange_obermatt = '#ff7800'
 
 
 try:
@@ -36,6 +45,10 @@ try:
 	fontpath = 'EBGaramond12-Regular.ttf'
 	prop = font_manager.FontProperties(fname=fontpath)
 	titlefont = {'fontname':prop.get_name()}
+	print(titlefont);
+	#print(ReadData);
+	#print(sys.argv[5]);
+	#print('table');
 	legendfont = prop.get_name()
 	plt.rcParams['font.family'] = 'Arial'
 	##End of font setting
@@ -44,32 +57,40 @@ try:
 	curTime = now.strftime("%Y%m%d")
 
 	#Reading filename from arguments
-	saveFileNameParam = sys.argv[1] 
-	saveFileNameParam=saveFileNameParam.replace("."+PRINT_FORMAT, "") 
-
+	PRINT_FORMAT = sys.argv[2] 
+	
 	#Reading printing mode (landscape[l] or portrait[p])
-	saveFileSizeParam = sys.argv[2] 
+	saveFileSizeParam = sys.argv[4] 
 
+	#Reading line format for company performance straight line or interpolated
+	COMPANY_PERFORMANCE_LINE = sys.argv[3] 
+	
+	print(COMPANY_PERFORMANCE_LINE)
+	
 	#Reading input data filename
-	saveinputFile = sys.argv[3] 
+	saveinputFile = sys.argv[1] 
 	saveinputFile=saveinputFile.replace(".csv", "")
 
 	
 	#savefilepath
 	savePath = "export_img/" 
-	saveFile = "_"+saveFileNameParam+"_"+saveinputFile+"_"+saveFileSizeParam+"."+PRINT_FORMAT
+	saveFile = "_"+saveinputFile+"_"+saveFileSizeParam+"."+PRINT_FORMAT
 	
 	#reading chart title (#titleName = 'Operating Index \nEBIT Margin' # Static Title Entry)
 	titleName = ReadData['title'][0]
 	titleName = titleName.replace('\\n', '\n') 
+	#table title
+	tabletitleName = ReadData['tabletitle'][-1]
+	#print(tabletitleName)
+	
 
 	#defining color and styles for various lines in chart
-	#TOP COLOR: #afdce3  
-	#ORANGE COLOR:#ff7800
-	#middle Line Color:#2e91ad
-	#Bottom COLOR: #91ccd1
+	#TOP COLOR: #afdce3 //lightskyblue
+	#ORANGE COLOR:#ff7800 //orange
+	#middle Line Color:#2e91ad //blue
+	#Bottom COLOR: #91ccd1 //darkskyblue
 
-	color = ['#afdce3','#2e91ad','#91ccd1','#ff7800','#2e91ad'] # COLOR_CODE of line
+	color = [lightskyblue_obermatt,blue_obermatt,darkskyblue_obermatt,orange_obermatt,blue_obermatt] # COLOR_CODE of line
 	style = ['-','-','-','-',''] # line type
 	marker = ['','','','o',''] # Marker type
 
@@ -82,7 +103,7 @@ try:
 	# Check if CSV file value is in percentage or not
 	percentageExist = ReadData["perExist"]
 	percentageFormat = '{:3.1f}'
-	if percentageExist: percentageFormat = '{:3.1f}%'
+	if percentageExist: percentageFormat = '{:3.1f} %'
 	#Marker width size
 	markerSize = 5 
 
@@ -93,6 +114,7 @@ try:
 	lineWidth = 1.5  # Line width value
 	
 	dottedKey = 3 # company name row id
+	
 	markerColor = '#ff6100' #marker color
 	
 	#title font size
@@ -102,6 +124,7 @@ try:
 	numberFontSize = 10.5 	
 
 	plt.figure(1)
+	plt.autoscale(enable=True, axis='y');
 	ax = plt.subplot(111)
 	
 	# Plot size margin from Bottom
@@ -120,8 +143,10 @@ try:
 	y = np.array(yAxisValue)
 
 	#x Axis Data points
-	my_xticks = ReadData['xAxisName'] 
-
+	my_xticks = ReadData['xAxisName']
+	
+	#my_xticks = ['','','','','','','','','','']
+	
 	#set X axis replace static number with original key value
 	plt.xticks(x, my_xticks,fontsize=numberFontSize)  
 
@@ -133,10 +158,10 @@ try:
 	fillData = {}
 	for data in y:
 		
-		if count == 3: 
+		if count == 3 and COMPANY_PERFORMANCE_LINE == "s": 
 			# Draw staright Line
 			f = interpolate.interp1d(np.arange(len(data)), data, kind='linear') 
-		
+			
 	
 		else:   
 			# Draw Curve Line
@@ -147,7 +172,10 @@ try:
 
 		fillData[count] = f(xnew)	
 		#Set plot final plot	
-		plt.plot(xnew, ynew, color=color[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidthArr[count],label=legendLabel[count])  
+		if count == 0:
+			plt.plot(xnew, ynew, color=color[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidthArr[count],label=legendLabel[count], zorder=99)  
+		else:
+			plt.plot(xnew, ynew, color=color[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidthArr[count],label=legendLabel[count], zorder=101)  
 		count = count + 1
 
 	# Fill color between two line start
@@ -156,77 +184,156 @@ try:
 	#from y1 to y2
 	fill2 = [1,2] 
 	# COLOR_CODE
-	colorFill = ['#91ccd1','#afdce3'] 
+	colorFill = [lightskyblue_obermatt,darkskyblue_obermatt] 
 	count1 = 0
 	for a,b in zip(fill1,fill2):
-		plt.fill_between(xnew, fillData[a],fillData[b], color=colorFill[count1], alpha='1',interpolate=True) 
+		plt.fill_between(xnew, fillData[a],fillData[b], color=colorFill[count1], alpha='1',interpolate=True, zorder=100) 
 		count1 = count1 +1
 	
 
 	# first add orange marker without line		
-	plt.plot(y[dottedKey],color=markerColor,linestyle='',markersize=markerSize,linewidth=lineWidth,marker='o'); 
+	plt.plot(y[dottedKey],color=markerColor,linestyle='',markersize=markerSize,linewidth=lineWidth,marker='o',zorder=102); 
 	
 	# added to display value on marker	
 	for i,j in zip(x,y[dottedKey]):	
 		#converted values into percentage value
-		ax.annotate(percentageFormat.format(j),xy=(i,j),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize)	
+		ax.annotate(percentageFormat.format(j),xy=(i,j),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize,zorder=103)	
 
 	vals = ax.get_yticks()
 	#converted values into percentage value
-	ax.set_yticklabels([percentageFormat.format(x) for x in vals],fontsize=numberFontSize) 
+	ax.set_yticklabels([percentageFormat.format(x) for x in vals],fontsize=numberFontSize)
+	# Display table or not based on parameter passed by user, by default table will display on graph, 0 -> dont display table, 1 -> Display table
+	try:
+		sys.argv[5] # Parameter which is entered by user
+	except Exception as e:
+		showTable = False # default display Table
+		boxx=0.26
+		boxy=-0.15
+	else:
+		showTable = False
+		boxx=0.26
+		boxy=-0.15
+		if sys.argv[5] == 't': # if user enter 1 display table else dont display the table
+			showTable = True
+			boxx=0.32
+			boxy=-0.58
+			
+	plt.xticks(x, my_xticks,fontsize=numberFontSize)
+
+	if showTable: # True display Table
+		# First Table start
+		the_table = plt.table(cellText=y,colLabels=my_xticks,loc='bottom',colLoc='right',rowLoc='left')	
+		
+		the_table.set_fontsize(numberFontSize)
+		the_table.scale(1,1.5)
+		
+		#Remove Border of table 1 cell
+		for key, cell in the_table.get_celld().items():		
+			cell.set_linewidth(0)
+		# First Table end
+		
+		# right side table of company name start		
+		my_xticks_1 = [tabletitleName]
+		legendLabel_1 = np.reshape(legendLabel, (-1, 1))	
+		
+		the_table1 = plt.table(cellText=legendLabel_1,colLabels=my_xticks_1,loc='bottom right',colLoc='bottom left',rowLoc='bottom left',animated=True)
+		the_table1.auto_set_column_width([-1,0,1]) # set column width	
+		the_table1.set_fontsize(numberFontSize)
+		the_table1.scale(1,1.5)
+		cells = the_table1.properties()["celld"]
+		
+		# row text left align
+		cellLength = len(legendLabel) #length of row
+		for i in range(0,cellLength+1):
+			cells[i, 0]._loc = 'left'		
+		
+		
+		#Remove Border of table 2 cell
+		for key, cell in the_table1.get_celld().items():
+			cell.set_linewidth(0)
+			
+		# right side table of company name end
+		
+		#plt.xticks([]) # remove x Axis values, already put value using table
+		my_xticks = ['','','','','','','','','','']
+	
+		#set X axis replace static number with original key value
+		plt.xticks(x, my_xticks,fontsize=numberFontSize) 
+		#ax.tick_params(axis='x',which='major',bottom=15)
+
+		
+		
+		
+
+
 	# Set title
-	csfont = {'fontname':'EB Garamond'}	
+	#csfont = {'fontname':'EB Garamond'}	
 	plt.title(titleName,loc='left',fontsize=titleSize,fontweight="bold",**titlefont)
 
 	fig = plt.gcf()
 
 	# defining portrait or landscape mode
 	if saveFileSizeParam == 'p': 
-		fig.set_size_inches(8.3, 4.3)
-		dpi = 150
+		print ("Printing in Portraight Mode")
+		fig.set_size_inches(10.3, 7.3)
+		#fig.set_size_inches(8.3, 4.3)
+		#fig.set_size_inches(5.9, 9.84)
+		dpi = 500
 	else:  
 		#either landscape or if not defined
+		print ("Printing in landscape mode")
 		fig.set_size_inches(9.84, 5.9)	
-		dpi = 200
+		dpi = 500
 
-
+		
 	# Start of designing custome legends
 
-	m2, = ax.plot([], [],color='#ffffff' , 
-              fillstyle='bottom', linestyle='none',linewidth=2)
-	m3, = ax.plot([], [], color='#ffffff', marker='',markersize=2,  fillstyle='bottom',
-               linestyle='none',linewidth=1)
-	m4, = ax.plot([], [], color='#ff7800' , marker='o',
-               linestyle='none',solid_joinstyle='round',linewidth=1)
+	m2, = ax.plot([], [])
+	m3, = ax.plot([], [])
+	m3, = ax.plot([], [], color='#ffffff', marker='',markersize=2,  fillstyle='bottom', linestyle='none',linewidth=1)
+	m4, = ax.plot([], [], color=orange_obermatt , marker='o', linestyle='none',solid_joinstyle='round',linewidth=1)
 	
 	legendtext1 = ReadData['axisfigtext'][0]
 	legendtext2 = ReadData['axisfigtext'][1]
 	
-	plt.figtext(0.12, 0.08, '----------------------------------------------------',
-		    backgroundcolor='#afdce3', color='#afdce3', weight='ultralight',
-		    size='3')
-	plt.figtext(0.12, 0.068, '---------------------------------------------------- -------------------------- ------------------------  ------------------------- ------------------------- ',
-		    backgroundcolor='#2e91ad', color='#2e91ad', weight='ultralight',
-		    size='1')
-	plt.figtext(0.12, 0.06, '----------------------------------------------------',
-		    backgroundcolor='#91ccd1',
-		    color='#91ccd1', weight='ultralight', size='3')
-	plt.figtext(0.23, 0.06, legendtext1,
-		    backgroundcolor='#ffffff',
-		    color='black', weight='normal', size='11',family=legendfont)
-	plt.figtext(0.12, 0.02, '-------------------------------O--------------------- -------------------------- ------------------------  ------------------------- ------------------------- ',
-		    backgroundcolor='#ff7800', color='#ff7800', weight='normal',
-		    size='1')
 	
-	plt.legend(((m2,m3),m4), ('', legendtext2), numpoints=1, labelspacing=2,
-          loc='center', fontsize=11.0,bbox_to_anchor=(0.14, -0.199),handlelength=6,frameon=False,prop={'family':legendfont})
+	
+	# setup the handler instance for the scattered data
+	custom_handler = CustomeLegend.ImageHandler()
+	custom_handler.set_image('./legend_images/legend1.png',image_stretch=(10,1))
+
+	custom_handler2 = CustomeLegend.ImageHandler()
+	custom_handler2.set_image('./legend_images/legend2.png',image_stretch=(10, 1))
+	
+	
+	
+	
+	linetext1='----------------------------------------------------'
+	linetext2='---------------------------------------------------- -------------------------- ------------------------  ------------------------- -------------------------'
+	if saveFileSizeParam=="l":
+		plt.legend([m2, m3],
+			   [legendtext1, legendtext2],
+			   handler_map={m2: custom_handler, m3:custom_handler2},
+			   labelspacing=1, loc='right', bbox_to_anchor=(0.27, -0.58),frameon=False,prop={'family':legendfont,'size':11})
+	else :
+		plt.legend([m2, m3],
+			   [legendtext1, legendtext2],
+			   handler_map={m2: custom_handler, m3:custom_handler2},
+			   labelspacing=1, loc='right', bbox_to_anchor=(boxx,boxy),frameon=False,prop={'family':legendfont,'size':11})
 
 	# End of designing custome legends 
 	
-	## bbox_inches='tight'  for removing margin and paddding of graph 
-	plt.savefig(savePath+curTime+saveFile, dpi=dpi, bbox_inches='tight', format=PRINT_FORMAT) 
+	## bbox_inches='tight'  for removing margin and paddding of graph
+	if showTable:
+		
+		plt.subplots_adjust(bottom=0.35,right=0.8,hspace=0.5,wspace=0.5) #Margin size of plot
+
+	plt.savefig(savePath+curTime+saveFile, dpi=dpi, format=PRINT_FORMAT) 
+	#plt.savefig(savePath+curTime+saveFile, dpi=dpi, bbox_inches='tight', format=PRINT_FORMAT) 
 	
-	#plt.show()	
+	
+	plt.show()	
+	
 	print("Chart succesfully completed. \n You can find generated file at following location:\n " +savePath+curTime+saveFile)	
 
 except Exception as e:	

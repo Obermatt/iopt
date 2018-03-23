@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def readData():		
-	readFileNameParam = sys.argv[3] #read CSV file
+	readFileNameParam = sys.argv[1] #read CSV file
 	filename = 'file/'+readFileNameParam
 	csvRowCount	 = 0;	
 	data = {}	
@@ -16,6 +16,7 @@ def readData():
 	arrThree = []
 	arrFour = []
 	arrFive = []
+	arrSix = []
 	finalArr	= {}
 	perExist = False
 	with open(filename,'rt') as file: # Read CSV file
@@ -27,7 +28,8 @@ def readData():
 			csvRowCount = csvRowCount + 1 		
 			if csvRowCount == 1:
 				#X axis value escape last 3 row
-				arrFirst = csvRow[:-3] 
+				arrFirst = csvRow[:-3]
+				arrSix = csvRow[:-2] 
 				continue
 			# All Legend name
 			arrTwo.append(csvRow[len(csvRow) - 3])
@@ -51,6 +53,7 @@ def readData():
 		finalArr['axisfigtext'] = arrFour
 		finalArr['title'] = arrFive  
 		finalArr['perExist'] = perExist
+		finalArr['tabletitle'] = arrSix
 	#final return done	
 	return finalArr 
 
