@@ -9,7 +9,7 @@ def readData():
 	#readFileNameParam = sys.argv[1] #read CSV file	
 	finalArr1 = []
 	for readFileNameParam in os.listdir("file/"): # Read All the files inside file folder
-		if readFileNameParam.endswith(".csv") and readFileNameParam.startswith("oi"): #Read only CSV file  & start with oi name
+		if readFileNameParam.endswith(".csv") and readFileNameParam.startswith("ok"): #Read only CSV file & start with ok name
 			filename = 'file/'+readFileNameParam			
 			csvRowCount	 = 0;	
 			data = {}	
@@ -25,7 +25,7 @@ def readData():
 			perExist = False	
 			with open(filename,'rt') as file: # Read CSV file
 				reader=csv.reader(file)
-				data=list(reader)
+				data=list(reader)				
 				for csvRow in data:
 					#Auto increament	
 					csvRowCount = csvRowCount + 1 		
@@ -36,6 +36,8 @@ def readData():
 						continue
 					# All Legend name
 					arrTwo.append(csvRow[len(csvRow) - 5])
+					if any("%" in str for str in csvRow): #to check value is in percentage format or normal format
+						perExist = True; # if percentage value exist in CSV file
 					# cutomized Legend text
 					arrFour.append(csvRow[len(csvRow) - 4]) 
 					# chart title
@@ -53,29 +55,15 @@ def readData():
 						# if percentage value exist in CSV file
 						csvRowerarrSevenExist = True 
 					# replace % from the value
-					csvRow = [w.replace('%', '') for w in csvRow]			
+					csvRow = [w.replace('%', '') for w in csvRow]
 					# Line multidimentional value			
-					arrThree.append([np.nan if v is '' else v for v in csvRow[:-5]]) # replace blank value with none
+					arrThree.append([np.nan if v is '' else round(float (v)) for v in csvRow[:-5]]) # replace blank value with none
 				
 				# Start - to get Y min & max value if user not set Y min or max value then find min max from array
-				arrThree = [list(map(float, i)) for i in arrThree[:5]] # All the data
-				totalVal = [list(map(float, i)) for i in arrThree[:4]] # skipped count row
-				exceedYAxis = 3
-				if arrSeven == "" or arrEight == "":									
-					arrSeven = np.nanmin(totalVal) #Min value
-					arrEight = np.nanmax(totalVal) #Max value		
-					#get Y min Value
-					if arrSeven >= 0:
-						arrSeven = arrSeven+exceedYAxis
-					else:
-						arrSeven = arrSeven-exceedYAxis
-					#get Y max Value
-					if arrEight >= 0:
-						arrEight = arrEight+exceedYAxis
-					else:
-						arrEight = arrEight-exceedYAxis
-				# End - to get Y min & max value if user not set Y min or max value then find min max from array
+				arrThree = [list(map(float, i)) for i in arrThree[:6]] # All the data
 								
+				arrSeven = 0
+				arrEight = 100
 				finalArr['xAxisName'] = arrFirst
 				finalArr['legendName'] = arrTwo
 				finalArr['axisValue'] = arrThree

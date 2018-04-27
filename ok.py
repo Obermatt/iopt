@@ -1,10 +1,13 @@
+import pandas as pd
 import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D
-import CsvRead as CsvData #imported python file for CSV read 
+import CsvRead_Ok as CsvData #imported python file for CSV read 
 import matplotlib
 import matplotlib.font_manager as font_manager 
+
+import sys
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -13,26 +16,48 @@ warnings.filterwarnings("ignore")
 PRINT_FORMAT = "png"
 
 #defining colorcodes
+orange_obermatt = '#ff7802'
+red_obermatt = '#a53332'
+yellow_obermatt = '#ffdc00'
+green_obermatt = '#2eaa60'
+violett_obermatt = '#593794'
+lila_obermatt = '#9d2fa3'
+
+brown_obermatt="#472101"
 lightskyblue_obermatt = '#ACE3E8'
 darkskyblue_obermatt = '#91CCD1'
 blue_obermatt = '#2A90AC'
-orange_obermatt = '#ff7802'
-brown_obermatt="#472101"
+
+# svg or png
+SaveFileType = sys.argv[1] 
+
+#s=Streight, i=Interpolate
+LineType = sys.argv[2] 
+
+#p=portrait, l=Landscape
+FileFormat = sys.argv[3] 
+
+try:
+	#t=table
+	TableShow = sys.argv[4] 
+except Exception as e:
+	TableShow = 0
+
 
 #below function is used to convert nan value to default interpolate value between of two numbers
 def nan_helper(y):
     return np.isnan(y), lambda z: z.nonzero()[0]
-
+    
 # parameter: {filename}.py {savefilename} {filesize} {sourcecsvfile}.csv {table show[0,1]}
-def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
+def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 	try:
 		import ParamValidator as prmValid #validate parmas when run script from command line
 
 		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-				
 		dataRead = CsvData.readData() # read CSV data multiple file		
+		
 		incr=1
-		for ReadData in dataRead:				
+		for ReadData in dataRead:							
 			##Start of font setting
 			matplotlib.font_manager._rebuild()
 			fontpath = 'AGaramondPro-Regular.otf'
@@ -68,9 +93,9 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 			saveFile = "_oic_"+saveinputFile+"_"+saveFileSizeParam
 					
 			#color code of line
-			color = [orange_obermatt,blue_obermatt,blue_obermatt,blue_obermatt,blue_obermatt] 
-			style = ['-','--','-','--',''] # line type
-			marker = ['o','','','',''] # Marker type				legendLabel = ReadData['legendName'] # legend name
+			color = [orange_obermatt,red_obermatt,yellow_obermatt,green_obermatt,violett_obermatt,lila_obermatt] 
+			style = ['-','-','-','-','-','-'] # line type
+			marker = ['o','o','o','o','o','o'] # Marker type				legendLabel = ReadData['legendName'] # legend name
 			legendLabel = ReadData['legendName'] # legend name
 			legendLabel1 = ReadData['legendName'] # legend name
 
@@ -79,9 +104,9 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 			numberFontSize = 10.5			
 
 			# Check if CSV file value is in percentage or not
-			percentageExist = ReadData["perExist"]
+			percentageExist = ReadData["perExist"]			
 			percentageFormat = '{:3.1f}'
-			if percentageExist: percentageFormat = '{:3.1f}%'
+			if percentageExist: percentageFormat = '{:3.0f}%'
 
 			# Plot size margin from Bottom
 			plt.subplots_adjust(bottom=0.2,left=2.5,right=3.5) 
@@ -91,31 +116,42 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 			ax = plt.subplot()
 			ax.spines['right'].set_visible(False) #hide right line of chart
 			ax.spines['top'].set_visible(False) #hide top line of chart
-
-			x = np.array(list(range(len(ReadData['xAxisName'])))) # X values total count
-
-			yAxisValue = ReadData['axisValue'] # Y values data from CSV		
+			
+			x = np.array(list(range(len(ReadData['xAxisName'])))) # X values total count					
+							
+			yAxisValue = ReadData['axisValue'] # Y values data from CSV					
 			# added below to set Y axis value static & dynamic Start
 			yMin = ReadData['yMin']
 			yMax = ReadData['yMax']	
 			y = np.array(yAxisValue)
-			plt.ylim(int(yMin),int(yMax))			
+			#plt.ylim(int(yMin),int(yMax))
 			
-			my_xticks = ReadData['xAxisName'] # X values data from CSV
+			ax.set_yticks([0,25,50,75,100])
+			vals = ax.get_yticks()
 
-			for i,j in zip(x,y[dottedKey]):	# added to display value on marker		
-				ax.annotate(percentageFormat.format(j),xy=(i,j),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize)	#converted values into percentage value	
-					
+			# Converted values into percentage value
+			ax.set_yticklabels([percentageFormat.format(x) for x in vals],fontsize=numberFontSize) 
+			
+			my_xticks = ReadData['xAxisName'] # X values data from CSV								
+			
+			#for i,j in zip(x,y):	# added to display value on marker		
+				#print(j)
+				#ax.annotate(percentageFormat.format(j[count]),xy=(i,j[count]),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize,zorder=103)	#converted values into percentage value	
+			#exit()		
 			from scipy import interpolate # interpolate is used to convert the streight line with curve
-			legend_elements = []		
+			legend_elements = []
+			fillData = {}				
 			for data in y:
 				if LineType == "s":
 					f = interpolate.interp1d(np.arange(len(data)), data, kind='linear')
 					xnew = np.arange(0, len(data)-1, 0.01)
 					ynew = f(xnew)	
 					# to set a curve line iprint(nstead of streight line End
-					plt.plot(xnew, ynew, color=color[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,label=legendLabel[count]) #Set plot final plot
-					legend_elements.append(Line2D([0], [0],color=color[count],label=legendLabel1[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,marker=marker[count])) #to set the legend							
+					plt.plot(xnew, ynew, color=color[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,label=legendLabel[count], zorder=101) #Set plot final plot
+					legend_elements.append(Line2D([0], [0],color=color[count],label=legendLabel1[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,marker=marker[count])) #to set the legend	
+					plt.plot(y[count],color=color[count],linestyle='',markersize=markerSize,linewidth=lineWidth,marker='o', zorder=102); 
+					ax.annotate(percentageFormat.format(data[count]),xy=(i,y[count]),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize,zorder=103)	#converted values into percentage value						
+					fillData[count] = f(xnew)			
 				else:
 					#interpolate value if found Nan value in array
 					data = np.array(data)
@@ -126,11 +162,24 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 					xnew = np.arange(0, len(data)-1, 0.01)
 					ynew = f(xnew)	
 					# to set a curve line iprint(nstead of streight line End
-					plt.plot(xnew, ynew, color=color[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,label=legendLabel[count]) #Set plot final plot
-					legend_elements.append(Line2D([0], [0],color=color[count],label=legendLabel1[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,marker=marker[count])) #to set the legend						
-				count = count+1 # Auto increament of loop
-			# Add orange marker on line
-			plt.plot(y[dottedKey],color='#ff6100',linestyle='',markersize=markerSize,linewidth=lineWidth,marker='o'); 
+					plt.plot(xnew, ynew, color=color[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,label=legendLabel[count], zorder=101) #Set plot final plot
+					legend_elements.append(Line2D([0], [0],color=color[count],label=legendLabel1[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,marker=marker[count])) #to set the legend	
+					plt.plot(y[count],color=color[count],linestyle='',markersize=markerSize,linewidth=lineWidth,marker='o', zorder=102); 
+					#ax.annotate(percentageFormat.format(data[count]),xy=(i,data[count]),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize,zorder=103)	#converted values into percentage value	
+					fillData[count] = f(xnew)			
+				count = count+1 # Auto increament of loop"""
+			#from y0 to y1	
+			fill1 = [1,2,3] 
+			#from y1 to y2
+			fill2 = [2,3,4] 
+			# COLOR_CODE
+			colorFill = [darkskyblue_obermatt,blue_obermatt,lightskyblue_obermatt] 
+			count1 = 0
+			fillArr = [25,50,50.5]
+			fillArr1 = [50,50.5,75]
+			for a,b in zip(fill1,fill2):				
+				plt.fill_between(x, fillArr[count1],fillArr1[count1], color=colorFill[count1], alpha='1',interpolate=False, zorder=100) 
+				count1 = count1 +1
 			
 			# to set the legend
 			plt.legend(handles=legend_elements,bbox_to_anchor=(1, 0.8),prop={'size': numberFontSize,'weight':'normal'},labelspacing=2,frameon=False)
@@ -145,17 +194,20 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 			except Exception as e:
 				showTable = True # default display Table				
 			else:
-				showTable = False
+				showTable = False				
 				if TableShow == 't': # if user enter 1 display table else dont display the table
 					showTable = True					
 					saveFile += "_t"
-								
+			
 			saveFile += "."+PRINT_FORMAT
 			plt.xticks(x, my_xticks,fontsize=numberFontSize)
 			
 			if showTable: # True display Table
 				# First Table start
-				the_table = plt.table(cellText=y,colLabels=my_xticks,loc='bottom',colLoc='right',rowLoc='left')					
+				# replacing y nan values with empty string				
+				y_without_nan = y;
+				y_without_nan[np.isnan(y_without_nan)]=0;
+				the_table = plt.table(cellText=y_without_nan, colLabels=my_xticks,loc='bottom',colLoc='right',rowLoc='left')					
 				the_table.set_fontsize(numberFontSize)
 				the_table.scale(1,1.5)
 				
@@ -209,3 +261,7 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 	except Exception as e:	
 		print("Something Went wrong! Unable to process your request.")
 		print(e)
+
+
+okGraph(SaveFileType,LineType,FileFormat,TableShow)
+

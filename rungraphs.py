@@ -16,7 +16,7 @@ FileFormat = sys.argv[3]
 
 try:
 	#t=table
-	TableShow = sys.argv[4] 
+	TableShow = sys.argv[4]
 except Exception as e:
 	TableShow = 0
 
