@@ -57,11 +57,11 @@ def readData():
 					# replace % from the value
 					csvRow = [w.replace('%', '') for w in csvRow]
 					# Line multidimentional value			
-					arrThree.append([np.nan if v is '' else round(float (v)) for v in csvRow[:-5]]) # replace blank value with none
+					arrThree.append([np.nan if v is '' else int(round(float (v))) for v in csvRow[:-5]]) # replace blank value with none
 				
 				# Start - to get Y min & max value if user not set Y min or max value then find min max from array
-				arrThree = [list(map(float, i)) for i in arrThree[:6]] # All the data
-								
+				#arrThree = [list(map(float, i)) for i in arrThree[:6]] # All the data
+				#print(arrThree);				
 				arrSeven = 0
 				arrEight = 100
 				finalArr['xAxisName'] = arrFirst
@@ -76,6 +76,8 @@ def readData():
 				#filename without extension
 								
 				readFileNameParam=readFileNameParam.replace(".csv", "")
+				readFileNameParam=readFileNameParam.replace("ok_", "")
+
 				finalArr['fileName'] = readFileNameParam
 				
 				finalArr1.append(finalArr)

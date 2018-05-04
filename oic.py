@@ -23,13 +23,11 @@ brown_obermatt="#472101"
 def nan_helper(y):
     return np.isnan(y), lambda z: z.nonzero()[0]
 
-# parameter: {filename}.py {savefilename} {filesize} {sourcecsvfile}.csv {table show[0,1]}
+
 def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 	try:
 		import ParamValidator as prmValid #validate parmas when run script from command line
 
-		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-				
 		dataRead = CsvData.readData() # read CSV data multiple file		
 		incr=1
 		for ReadData in dataRead:				
@@ -65,12 +63,12 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 			
 			savePath = "export_img/"			
 			saveinputFile = ReadData['fileName']
-			saveFile = "_oic_"+saveinputFile+"_"+saveFileSizeParam
+			saveFile = "_oic_"+saveinputFile+"_"+LineType+"_"+saveFileSizeParam
 					
 			#color code of line
 			color = [orange_obermatt,blue_obermatt,blue_obermatt,blue_obermatt,blue_obermatt] 
 			style = ['-','--','-','--',''] # line type
-			marker = ['o','','','',''] # Marker type				legendLabel = ReadData['legendName'] # legend name
+			marker = ['o','','','',''] # Marker type legendLabel = ReadData['legendName'] # legend name
 			legendLabel = ReadData['legendName'] # legend name
 			legendLabel1 = ReadData['legendName'] # legend name
 
@@ -84,7 +82,8 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 			if percentageExist: percentageFormat = '{:3.1f}%'
 
 			# Plot size margin from Bottom
-			plt.subplots_adjust(bottom=0.2,left=2.5,right=3.5) 
+			#plt.subplots_adjust(bottom=0.2,left=2.5,right=3.5) 
+			plt.subplots_adjust(bottom=0.2) 
 			
 			# -- Start Plot  --		
 			plt.figure()			
@@ -199,13 +198,25 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 				#either landscape or if not defined
 				fig.set_size_inches(9.84, 5.9)	
 				dpi = 500
-							
-			#if showTable:
-			plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35) #Margin size of plot			
+
+			#Margin size of plot					
+			if showTable:
+				plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35)	
+			else:
+				plt.subplots_adjust(right=0.74) #Margin size of plot	
+
 			plt.savefig(savePath+curTime+saveFile, dpi=dpi, format=PRINT_FORMAT)
-			print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+			print(str(incr)+" : " +curTime+saveFile)	
 			incr=incr+1
 			#plt.show()
 	except Exception as e:	
-		print("Something Went wrong! Unable to process your request.")
+		print("Something Went wrong at OIC chart! Unable to process your request.")
 		print(e)
+
+
+
+
+#reading file arguments
+from args_reader import *
+print("\nOIC graph file generation started:")
+salesGrowth(SaveFileType,LineType,FileFormat,TableShow)

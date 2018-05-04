@@ -88,6 +88,7 @@ def readData():
 				#filename without extension
 								
 				readFileNameParam=readFileNameParam.replace(".csv", "")
+				readFileNameParam=readFileNameParam.replace("oi_", "")
 				finalArr['fileName'] = readFileNameParam
 				
 				finalArr1.append(finalArr)

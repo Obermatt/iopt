@@ -2,6 +2,7 @@
 
 #importing required files and libraries
 import os
+import sys
 import matplotlib
 import matplotlib.pyplot as plt 
 import numpy as np  
@@ -28,20 +29,16 @@ warnings.filterwarnings("ignore")
 PRINT_FORMAT = "png"
 COMPANY_PERFORMANCE_LINE = "s" #straight line  // i #interpolated
 
-#python oi.py sample.csv svg s p t
-
 #defining colorcodes
 lightskyblue_obermatt = '#ACE3E8'
 darkskyblue_obermatt = '#91CCD1'
 blue_obermatt = '#2A90AC'
 orange_obermatt = '#ff7802'
 brown_obermatt="#472101"
-"""
-SaveFileType = save file format type
-LineType = Streight line or Curve line
-FileFormat = File format should be landscape or portrait
-TableShow = Display table or not
-"""
+
+
+#start of function
+
 def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 	try:
 		#validate parmas when run script from command line
@@ -80,7 +77,7 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 			
 			#savefilepath
 			savePath = "export_img/" 
-			saveFile = "_oi_"+saveinputFile+"_"+saveFileSizeParam
+			saveFile = "_oi_"+saveinputFile+"_"+LineType+"_"+saveFileSizeParam
 			
 			#reading chart title (#titleName = 'Operating Index \nEBIT Margin' # Static Title Entry)
 			titleName = ReadData['title'][0]
@@ -133,6 +130,10 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 
 			# Plot size margin from Bottom
 			plt.subplots_adjust(bottom=0.2) 
+
+			# Plot size margin from Bottom
+			#plt.subplots_adjust(bottom=0.2,left=2.5,right=3.5) 
+			
 
 			#hide right and left line of chart
 			ax.spines['right'].set_visible(False) 
@@ -253,7 +254,8 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 			
 			if showTable: 
 				# -------------- Data Table start-----------------------
-				y[np.isnan(y)] = None
+				#y = np.array(y)
+								
 				the_table = plt.table(cellText=y,colLabels=my_xticks,loc='bottom',cellLoc='right',colLoc='right',rowLoc='left')				
 				the_table.set_fontsize(numberFontSize)
 				the_table.scale(1,1.5)
@@ -351,17 +353,27 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 			
 			if showTable:
 				plt.subplots_adjust(bottom=0.35,right=0.8,hspace=0.5,wspace=0.5) #Margin size of plot			
+			else:
+				plt.subplots_adjust(right=0.8) #Margin size of plot			
 
 			plt.savefig(savePath+curTime+saveFile, dpi=dpi, format=PRINT_FORMAT) 	
 			#plt.savefig(savePath+curTime+saveFile, dpi=dpi, bbox_inches='tight', format=PRINT_FORMAT) 
 			
 			#plt.show()	
+			print(str(incr) + " : " +curTime+saveFile)	
 			incr=incr+1
-			print("Chart succesfully completed. \n You can find generated file at following location:\n " +savePath+curTime+saveFile)	
+
 			
 
 	except Exception as e:	
 
-		print("Something Went wrong! Unable to process your request.")
+		print("Something Went wrong at Oi chart! Unable to process your request.")
 		print(e)
 	## End of program
+
+
+
+#reading file arguments
+from args_reader import *
+print("\nOI graph file generation started:")
+operatingIndex(SaveFileType,LineType,FileFormat,TableShow)

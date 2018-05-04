@@ -11,6 +11,7 @@ import sys
 import warnings
 warnings.filterwarnings("ignore")
 
+
 #Change format option to svg or png
 PRINT_FORMAT = "png"
 
@@ -27,32 +28,17 @@ lightskyblue_obermatt = '#ACE3E8'
 darkskyblue_obermatt = '#91CCD1'
 blue_obermatt = '#2A90AC'
 
-# svg or png
-SaveFileType = sys.argv[1] 
-
-#s=Streight, i=Interpolate
-LineType = sys.argv[2] 
-
-#p=portrait, l=Landscape
-FileFormat = sys.argv[3] 
-
-try:
-	#t=table
-	TableShow = sys.argv[4] 
-except Exception as e:
-	TableShow = 0
-
 
 #below function is used to convert nan value to default interpolate value between of two numbers
 def nan_helper(y):
     return np.isnan(y), lambda z: z.nonzero()[0]
     
 # parameter: {filename}.py {savefilename} {filesize} {sourcecsvfile}.csv {table show[0,1]}
+
 def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 	try:
 		import ParamValidator as prmValid #validate parmas when run script from command line
 
-		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 		dataRead = CsvData.readData() # read CSV data multiple file		
 		
 		incr=1
@@ -84,12 +70,13 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 			lineWidth = 2 # Line width valuesaveFileNameParam
 			count = 0 # Loop start count
 			dottedKey = 0 # define where we need a dotted key on which line
-			titleName = 'Sales Growth'
+			titleName = ReadData['title'][0]
+			titleName = titleName.replace('\\n', '\n') 
 			replaceCountWord = 'Count'
 			
 			savePath = "export_img/"			
 			saveinputFile = ReadData['fileName']
-			saveFile = "_oic_"+saveinputFile+"_"+saveFileSizeParam
+			saveFile = "_ok_"+saveinputFile+ "_" +LineType+"_"+saveFileSizeParam 
 					
 			#color code of line
 			color = [orange_obermatt,red_obermatt,yellow_obermatt,green_obermatt,violett_obermatt,lila_obermatt] 
@@ -104,9 +91,9 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 
 			# Check if CSV file value is in percentage or not
 			percentageExist = ReadData["perExist"]			
-			percentageFormat = '{:3.1f}'
+			percentageFormat = '{:3.0f}'
 			if percentageExist: percentageFormat = '{:3.0f}%'
-
+			intFormat = '{:3.0f}'
 			# Plot size margin from Bottom
 			plt.subplots_adjust(bottom=0.2,left=2.5,right=3.5) 
 			
@@ -114,7 +101,8 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 			plt.figure()			
 			ax = plt.subplot()
 			ax.spines['right'].set_visible(False) #hide right line of chart
-			ax.spines['top'].set_visible(False) #hide top line of chart
+			ax.spines['left'].set_visible(False) #hide left line of chart
+
 			
 			x = np.array(list(range(len(ReadData['xAxisName'])))) # X values total count					
 							
@@ -149,7 +137,7 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 					plt.plot(xnew, ynew, color=color[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,label=legendLabel[count], zorder=101) #Set plot final plot
 					legend_elements.append(Line2D([0], [0],color=color[count],label=legendLabel1[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,marker=marker[count])) #to set the legend	
 					plt.plot(y[count],color=color[count],linestyle='',markersize=markerSize,linewidth=lineWidth,marker='o', zorder=102); 
-					ax.annotate(percentageFormat.format(data[count]),xy=(i,y[count]),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize,zorder=103)	#converted values into percentage value						
+					#ax.annotate(percentageFormat.format(data[count]),xy=(i,y[count]),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize,zorder=103)	#converted values into percentage value						
 					fillData[count] = f(xnew)			
 				else:
 					#interpolate value if found Nan value in array
@@ -205,8 +193,9 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 				# First Table start
 				# replacing y nan values with empty string				
 				y_without_nan = y;
-				y_without_nan[np.isnan(y_without_nan)]=0;
-				the_table = plt.table(cellText=y_without_nan, colLabels=my_xticks,loc='bottom',colLoc='right',rowLoc='left')					
+				#y_without_nan[np.isnan(y_without_nan)]=0;
+				y_without_nan_formatted = [[intFormat.format(k) for k in l] for l in y_without_nan]
+				the_table = plt.table(cellText=y_without_nan_formatted, colLabels=my_xticks,loc='bottom',colLoc='right',rowLoc='left')					
 				the_table.set_fontsize(numberFontSize)
 				the_table.scale(1,1.5)
 				
@@ -251,16 +240,23 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 				fig.set_size_inches(9.84, 5.9)	
 				dpi = 500
 							
-			#if showTable:
-			plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35) #Margin size of plot			
+			#Margin size of plot
+			if showTable:
+				plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35)
+			else: 			
+				plt.subplots_adjust(right=0.74)
+
 			plt.savefig(savePath+curTime+saveFile, dpi=dpi, format=PRINT_FORMAT)
-			print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+			print(str(incr) + " : " +curTime+saveFile);
 			incr=incr+1
 			#plt.show()
 	except Exception as e:	
-		print("Something Went wrong! Unable to process your request.")
-		print(e)
+		print("Something Went wrong at OK chart! Unable to process your request.")
+		print(e) 
 
 
+
+from args_reader import *
+print("\nOK graph file generation started:")
 okGraph(SaveFileType,LineType,FileFormat,TableShow)
 
