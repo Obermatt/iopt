@@ -61,7 +61,8 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 			titleName = 'Sales Growth'
 			replaceCountWord = 'Count'
 			
-			savePath = "export_img/"			
+			#save path from export_path.py
+			from export_path import savePath			
 			saveinputFile = ReadData['fileName']
 			saveFile = "_oic_"+saveinputFile+"_"+LineType+"_"+saveFileSizeParam
 					

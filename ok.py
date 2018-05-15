@@ -2,6 +2,7 @@ import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D
+import legend_handler as CustomeLegend
 import CsvRead_Ok as CsvData #imported python file for CSV read 
 import matplotlib
 import matplotlib.font_manager as font_manager 
@@ -72,9 +73,12 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 			dottedKey = 0 # define where we need a dotted key on which line
 			titleName = ReadData['title'][0]
 			titleName = titleName.replace('\\n', '\n') 
+			tabletitleName = ReadData['tabletitle'][-1]
+				
 			replaceCountWord = 'Count'
-			
-			savePath = "export_img/"			
+			#save path from export_path.py
+			from export_path import savePath
+			#savePath = "export_img/"			
 			saveinputFile = ReadData['fileName']
 			saveFile = "_ok_"+saveinputFile+ "_" +LineType+"_"+saveFileSizeParam 
 					
@@ -83,6 +87,7 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 			style = ['-','-','-','-','-','-'] # line type
 			marker = ['o','o','o','o','o','o'] # Marker type				legendLabel = ReadData['legendName'] # legend name
 			legendLabel = ReadData['legendName'] # legend name
+			
 			legendLabel1 = ReadData['legendName'] # legend name
 
 			# replace Count word with _nolegend_. not required to display Count in legend	
@@ -169,7 +174,41 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 				count1 = count1 +1
 			
 			# to set the legend
+			
+#-------------------- Start of designing custome legends------------------------			
+			m2, = ax.plot([], [])
+			m3, = ax.plot([], [])
+			m3, = ax.plot([], [], color='#ffffff', marker='',markersize=2,  fillstyle='bottom', linestyle='none',linewidth=1)
+			m4, = ax.plot([], [], color=orange_obermatt , marker='o', linestyle='none',solid_joinstyle='round',linewidth=1)
+			
+			legendtext1 = ReadData['axisfigtext'][0]
+			legendtext2 = ReadData['axisfigtext'][1]
+			
+			
+			
+			# setup the handler instance for the scattered data
+			custom_handler = CustomeLegend.ImageHandler()
+			custom_handler.set_image('./legend_images/legend1.png',image_stretch=(4,1))
+
+			
+			
+			
+			
+			
+			linetext1='----------------------------------------------------'
+			linetext2='---------------------------------------------------- -------------------------- ------------------------  ------------------------- -------------------------'
+			boxx=1.37
+			boxy=0.15
+			legend1=plt.legend([m2],
+					   [legendtext1],
+					   handler_map={m2: custom_handler},
+					   labelspacing=2, loc='right', bbox_to_anchor=(boxx,boxy),frameon=False,prop={'size': numberFontSize,'weight':'normal'})
+
+		#-------------------- End of designing custome legends------------------------
+			
+			
 			plt.legend(handles=legend_elements,bbox_to_anchor=(1, 0.8),prop={'size': numberFontSize,'weight':'normal'},labelspacing=2,frameon=False)
+			plt.gca().add_artist(legend1)
 			vals = ax.get_yticks()
 
 			# Converted values into percentage value
@@ -197,7 +236,7 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 				y_without_nan_formatted = [[intFormat.format(k) for k in l] for l in y_without_nan]
 				the_table = plt.table(cellText=y_without_nan_formatted, colLabels=my_xticks,loc='bottom',colLoc='right',rowLoc='left')					
 				the_table.set_fontsize(numberFontSize)
-				the_table.scale(1,1.5)
+				the_table.scale(1,1.2)
 				
 				#Remove Border of table 1 cell
 				for key, cell in the_table.get_celld().items():		
@@ -205,13 +244,15 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 				# First Table end
 				
 				# right side table of company name start		
-				my_xticks_1 = [titleName]
+				#my_xticks_1 = [titleName]
+				my_xticks_1 = [tabletitleName]
+				#print(my_xticks_1)
 				legendLabel_1 = np.reshape(legendLabel, (-1, 1))	
 				
 				the_table1 = plt.table(cellText=legendLabel_1,colLabels=my_xticks_1,loc='bottom right',colLoc='bottom left',rowLoc='bottom left',animated=True)
 				#the_table1.auto_set_column_width([-1,0,1]) # set column width	
 				the_table1.set_fontsize(numberFontSize)
-				the_table1.scale(.5,1.5)
+				the_table1.scale(.5,1.2)
 				cells = the_table1.properties()["celld"]
 				
 				# row text left align
@@ -242,7 +283,8 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 							
 			#Margin size of plot
 			if showTable:
-				plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35)
+				#plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35)
+				plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.5,wspace=0.5)
 			else: 			
 				plt.subplots_adjust(right=0.74)
 

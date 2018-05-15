@@ -75,8 +75,9 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 			#saveinputFile=saveinputFile.replace(".csv", "")
 
 			
-			#savefilepath
-			savePath = "export_img/" 
+			#save path from export_path.py
+			from export_path import savePath
+			#savePath = "export_img/" 
 			saveFile = "_oi_"+saveinputFile+"_"+LineType+"_"+saveFileSizeParam
 			
 			#reading chart title (#titleName = 'Operating Index \nEBIT Margin' # Static Title Entry)
@@ -105,6 +106,7 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 			percentageFormat = '{:3.1f}'
 			percentageFormatYLables = '{:3.0f}%'
 			if percentageExist: percentageFormat = '{:3.1f}%'
+			intFormat = '{:3.0f}'
 			#Marker width size
 			markerSize = 5 
 
@@ -174,6 +176,8 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 			count = 0 
 			fillData = {}
 			#print(y)
+			lastcolumncount =len(y) -1
+			#print(len(y))
 			#exit()		
 			for data in y:
 				if count == 0 and COMPANY_PERFORMANCE_LINE == "s": 
@@ -234,16 +238,20 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 				TableShow # Parameter which is entered by user
 			except Exception as e:
 				showTable = False # default display Table
-				boxx=0.26
-				boxy=-0.15
+				#boxx=0.26
+				#boxy=-0.15
+				boxx=1.35
+				boxy= 0.58
 			else:
 				showTable = False
-				boxx=0.26
-				boxy=-0.15
+				#boxx=0.26
+				#boxy=-0.15
+				boxx=1.35
+				boxy= 0.58
 				if TableShow == 't': # if user enter 1 display table else dont display the table
 					showTable = True
-					boxx=0.32
-					boxy=-0.58
+					boxx=1.35
+					boxy= 0.58
 					saveFile += "_t"
 
 			saveFile += "."+PRINT_FORMAT
@@ -251,12 +259,48 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 			plt.xticks(x, my_xticks,fontsize=numberFontSize)
 
 			#---------------------------------------Code for Showing table started------------------------
-			
+			count4=0
 			if showTable: 
 				# -------------- Data Table start-----------------------
 				#y = np.array(y)
+				#print("-------------")
+				#print(y)
+				#exit()
+				#y_integer = y[4];
+				yx=y
+				
+				#cnt = 0
+				#for p in y:
+				#	if cnt==4:
+				#		cnt_1 = 0
+				#		for k in p:
+				#			
+				#			m=intFormat.format(k)
+				#			yx[cnt][cnt_1]=m
+				#			yx[cnt][cnt_1]=intFormat.format(k)
+				#			#print(m)
+				#			#print(yx[cnt][cnt_1])
+				#			cnt_1 =cnt_1+1
+				#	
+				#	cnt =cnt+1
+				
+				#print('saroj')	
+				#print(yx)
+				#exit()
+				#y_integer_formatted = [[ [intFormat.format(k) for k in l]  if l=4] for l in y]
+				y_without_nan =y
+				y_without_nan_formatted = [[intFormat.format(k) for k in l]  for l in y_without_nan]
+				
+				y_without_nan_formatted[:-1]=y[:-1]
+				y_without_nan_formatted = np.array(y_without_nan_formatted)
+				#print(y_without_nan_formatted)
+				#exit()
+
+				
+
+
 								
-				the_table = plt.table(cellText=y,colLabels=my_xticks,loc='bottom',cellLoc='right',colLoc='right',rowLoc='left')				
+				the_table = plt.table(cellText=y_without_nan_formatted,colLabels=my_xticks,loc='bottom',cellLoc='right',colLoc='right',rowLoc='left')				
 				the_table.set_fontsize(numberFontSize)
 				the_table.scale(1,1.5)
 
@@ -268,6 +312,7 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 				
 				# ---------------right side table of company name start------------------------------
 				my_xticks_1 = [tabletitleName]
+
 				legendLabel_1 = np.reshape(legendLabel, (-1, 1))				
 				the_table1 = plt.table(cellText=legendLabel_1,colLabels=my_xticks_1,loc='bottom right',colLoc='bottom center',rowLoc='bottom left',animated=True)
 				#the_table1.auto_set_column_width([-1,0,1]) # set column width
@@ -352,9 +397,11 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 		#-------------------- End of designing custome legends------------------------
 			
 			if showTable:
-				plt.subplots_adjust(bottom=0.35,right=0.8,hspace=0.5,wspace=0.5) #Margin size of plot			
+				plt.subplots_adjust(bottom=0.35,right=0.8,hspace=0.5,wspace=0.5) #Margin size of plot	
+				#plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35)		
 			else:
-				plt.subplots_adjust(right=0.8) #Margin size of plot			
+				plt.subplots_adjust(right=0.8) #Margin size of plot
+				#plt.subplots_adjust(right=0.74) #Margin size of plot			
 
 			plt.savefig(savePath+curTime+saveFile, dpi=dpi, format=PRINT_FORMAT) 	
 			#plt.savefig(savePath+curTime+saveFile, dpi=dpi, bbox_inches='tight', format=PRINT_FORMAT) 
