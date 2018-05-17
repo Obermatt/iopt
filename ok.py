@@ -30,6 +30,7 @@ darkskyblue_obermatt = '#91CCD1'
 blue_obermatt = '#2A90AC'
 
 
+
 #below function is used to convert nan value to default interpolate value between of two numbers
 def nan_helper(y):
     return np.isnan(y), lambda z: z.nonzero()[0]
@@ -38,7 +39,7 @@ def nan_helper(y):
 
 def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 	try:
-		import ParamValidator as prmValid #validate parmas when run script from command line
+		from path_config import img_file_path
 
 		dataRead = CsvData.readData() # read CSV data multiple file		
 		
@@ -76,9 +77,7 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 			tabletitleName = ReadData['tabletitle'][-1]
 				
 			replaceCountWord = 'Count'
-			#save path from export_path.py
-			from export_path import savePath
-			#savePath = "export_img/"			
+			
 			saveinputFile = ReadData['fileName']
 			saveFile = "_ok_"+saveinputFile+ "_" +LineType+"_"+saveFileSizeParam 
 					
@@ -100,15 +99,19 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 			if percentageExist: percentageFormat = '{:3.0f}%'
 			intFormat = '{:3.0f}'
 			# Plot size margin from Bottom
-			plt.subplots_adjust(bottom=0.2,left=2.5,right=3.5) 
+			#plt.subplots_adjust(bottom=0.2,left=2.5,right=3.5) 
 			
 			# -- Start Plot  --		
-			plt.figure()			
+			plt.figure()	
+			plt.autoscale(enable=False, axis='y');
 			ax = plt.subplot()
+
 			ax.spines['right'].set_visible(False) #hide right line of chart
 			ax.spines['left'].set_visible(False) #hide left line of chart
-
-			
+			ax.spines['bottom'].set_position(('axes',-0.005))
+			ax.spines['bottom'].set_linewidth(0.5)
+			ax.spines['top'].set_position(('axes',1.005))
+			ax.spines['top'].set_linewidth(0.5)
 			x = np.array(list(range(len(ReadData['xAxisName'])))) # X values total count					
 							
 			yAxisValue = ReadData['axisValue'] # Y values data from CSV					
@@ -120,17 +123,14 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 			
 			ax.set_yticks([0,25,50,75,100])
 			vals = ax.get_yticks()
-
+			
 			# Converted values into percentage value
 			ax.set_yticklabels([percentageFormat.format(x) for x in vals],fontsize=numberFontSize) 
 			
 			my_xticks = ReadData['xAxisName'] # X values data from CSV								
-			
-			#for i,j in zip(x,y):	# added to display value on marker		
-				#print(j)
-				#ax.annotate(percentageFormat.format(j[count]),xy=(i,j[count]),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize,zorder=103)	#converted values into percentage value	
-			#exit()		
+		
 			from scipy import interpolate # interpolate is used to convert the streight line with curve
+
 			legend_elements = []
 			fillData = {}				
 			for data in y:
@@ -157,13 +157,17 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 					plt.plot(xnew, ynew, color=color[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,label=legendLabel[count], zorder=101) #Set plot final plot
 					legend_elements.append(Line2D([0], [0],color=color[count],label=legendLabel1[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,marker=marker[count])) #to set the legend	
 					plt.plot(y[count],color=color[count],linestyle='',markersize=markerSize,linewidth=lineWidth,marker='o', zorder=102); 
-					#ax.annotate(percentageFormat.format(data[count]),xy=(i,data[count]),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize,zorder=103)	#converted values into percentage value	
+
 					fillData[count] = f(xnew)			
-				count = count+1 # Auto increament of loop"""
+				count = count+1 
+			# End of loop
+
 			#from y0 to y1	
 			fill1 = [1,2,3] 
+
 			#from y1 to y2
 			fill2 = [2,3,4] 
+
 			# COLOR_CODE
 			colorFill = [darkskyblue_obermatt,blue_obermatt,lightskyblue_obermatt] 
 			count1 = 0
@@ -190,24 +194,29 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 			custom_handler = CustomeLegend.ImageHandler()
 			custom_handler.set_image('./legend_images/legend1.png',image_stretch=(4,1))
 
+			if saveFileSizeParam == 'p': 
+				legendx=1
+				legendy=0.8
+				boxx=1.32
+				if TableShow=="t":
+					boxy=0.10
+				else:
+					boxy=0.25
+			else:
+				legendx=1
+				legendy=0.95
+				boxx=1.39
+				boxy=0.15
 			
-			
-			
-			
-			
-			linetext1='----------------------------------------------------'
-			linetext2='---------------------------------------------------- -------------------------- ------------------------  ------------------------- -------------------------'
-			boxx=1.37
-			boxy=0.15
 			legend1=plt.legend([m2],
 					   [legendtext1],
 					   handler_map={m2: custom_handler},
-					   labelspacing=2, loc='right', bbox_to_anchor=(boxx,boxy),frameon=False,prop={'size': numberFontSize,'weight':'normal'})
+					   labelspacing=2, loc='right', bbox_to_anchor=(boxx,boxy),frameon=False,prop={'size': numberFontSize,'weight':'normal', 'family':legendfont})
 
 		#-------------------- End of designing custome legends------------------------
 			
-			
-			plt.legend(handles=legend_elements,bbox_to_anchor=(1, 0.8),prop={'size': numberFontSize,'weight':'normal'},labelspacing=2,frameon=False)
+
+			plt.legend(handles=legend_elements,bbox_to_anchor=(legendx, legendy),prop={'size': numberFontSize,'weight':'normal','family':legendfont},labelspacing=2,frameon=False)
 			plt.gca().add_artist(legend1)
 			vals = ax.get_yticks()
 
@@ -233,10 +242,11 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 				# replacing y nan values with empty string				
 				y_without_nan = y;
 				#y_without_nan[np.isnan(y_without_nan)]=0;
+				tb = plt
 				y_without_nan_formatted = [[intFormat.format(k) for k in l] for l in y_without_nan]
-				the_table = plt.table(cellText=y_without_nan_formatted, colLabels=my_xticks,loc='bottom',colLoc='right',rowLoc='left')					
+				the_table = tb.table(cellText=y_without_nan_formatted, colLabels=my_xticks,loc='bottom',colLoc='right',rowLoc='left')					
 				the_table.set_fontsize(numberFontSize)
-				the_table.scale(1,1.2)
+				the_table.scale(1,1.3)
 				
 				#Remove Border of table 1 cell
 				for key, cell in the_table.get_celld().items():		
@@ -249,10 +259,10 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 				#print(my_xticks_1)
 				legendLabel_1 = np.reshape(legendLabel, (-1, 1))	
 				
-				the_table1 = plt.table(cellText=legendLabel_1,colLabels=my_xticks_1,loc='bottom right',colLoc='bottom left',rowLoc='bottom left',animated=True)
+				the_table1 = tb.table(cellText=legendLabel_1,colLabels=my_xticks_1,loc='bottom right',colLoc='bottom left',rowLoc='bottom left',animated=True)
 				#the_table1.auto_set_column_width([-1,0,1]) # set column width	
 				the_table1.set_fontsize(numberFontSize)
-				the_table1.scale(.5,1.2)
+				the_table1.scale(.5,1.3)
 				cells = the_table1.properties()["celld"]
 				
 				# row text left align
@@ -266,7 +276,7 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 					cell.set_linewidth(0)
 					
 				# right side table of company name end
-				
+
 				plt.xticks([]) # remove x Axis values, already put value using table
 										
 			plt.title(titleName,loc='left',fontsize=titleSize,fontweight="regular",color=brown_obermatt,**titlefont)# Set title 
@@ -284,11 +294,11 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 			#Margin size of plot
 			if showTable:
 				#plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35)
-				plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.5,wspace=0.5)
+				plt.subplots_adjust(bottom=0.35,right=0.74,top=0.89,hspace=0.5,wspace=0.5)
 			else: 			
-				plt.subplots_adjust(right=0.74)
+				plt.subplots_adjust(bottom=0.18,right=0.74) #Margin size of plot
 
-			plt.savefig(savePath+curTime+saveFile, dpi=dpi, format=PRINT_FORMAT)
+			plt.savefig(img_file_path+curTime+saveFile, dpi=dpi, format=PRINT_FORMAT)
 			print(str(incr) + " : " +curTime+saveFile);
 			incr=incr+1
 			#plt.show()
@@ -299,6 +309,6 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 
 
 from args_reader import *
-print("\nOK graph file generation started:")
+print("\nOk graph file generation started:")
 okGraph(SaveFileType,LineType,FileFormat,TableShow)
 

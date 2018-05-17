@@ -6,9 +6,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def readData():
+
+	
+	from path_config import csv_file_path
+
 	#readFileNameParam = sys.argv[1] #read CSV file	
 	finalArr1 = []
-	for readFileNameParam in os.listdir("file/"): # Read All the files inside file folder
+	for readFileNameParam in os.listdir(csv_file_path): # Read All the files inside file folder
 		if readFileNameParam.endswith(".csv") and readFileNameParam.startswith("ok"): #Read only CSV file & start with ok name
 			filename = 'file/'+readFileNameParam			
 			csvRowCount	 = 0;	

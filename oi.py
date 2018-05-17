@@ -42,8 +42,8 @@ brown_obermatt="#472101"
 def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 	try:
 		#validate parmas when run script from command line
+		from path_config import img_file_path
 
-		import ParamValidator as prmValid 
 		#ReadData = CsvData.readData() # read CSV data		
 		dataRead = CsvData.readData() # read CSV data multiple file	
 		incr = 1
@@ -76,8 +76,6 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 
 			
 			#save path from export_path.py
-			from export_path import savePath
-			#savePath = "export_img/" 
 			saveFile = "_oi_"+saveinputFile+"_"+LineType+"_"+saveFileSizeParam
 			
 			#reading chart title (#titleName = 'Operating Index \nEBIT Margin' # Static Title Entry)
@@ -128,18 +126,13 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 
 			plt.figure()
 			plt.autoscale(enable=False, axis='y');
-			ax = plt.subplot(111)
-
-			# Plot size margin from Bottom
-			plt.subplots_adjust(bottom=0.2) 
-
-			# Plot size margin from Bottom
-			#plt.subplots_adjust(bottom=0.2,left=2.5,right=3.5) 
-			
+			ax = plt.subplot()
 
 			#hide right and left line of chart
 			ax.spines['right'].set_visible(False) 
 			ax.spines['left'].set_visible(False) 
+			ax.spines['bottom'].set_position(('axes',-0.005))
+			ax.spines['top'].set_position(('axes',1.005))
 			
 			# X Axis Data points
 			x = np.array(list(range(len(ReadData['xAxisName']))))
@@ -262,43 +255,14 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 			count4=0
 			if showTable: 
 				# -------------- Data Table start-----------------------
-				#y = np.array(y)
-				#print("-------------")
-				#print(y)
-				#exit()
-				#y_integer = y[4];
+
 				yx=y
 				
-				#cnt = 0
-				#for p in y:
-				#	if cnt==4:
-				#		cnt_1 = 0
-				#		for k in p:
-				#			
-				#			m=intFormat.format(k)
-				#			yx[cnt][cnt_1]=m
-				#			yx[cnt][cnt_1]=intFormat.format(k)
-				#			#print(m)
-				#			#print(yx[cnt][cnt_1])
-				#			cnt_1 =cnt_1+1
-				#	
-				#	cnt =cnt+1
-				
-				#print('saroj')	
-				#print(yx)
-				#exit()
-				#y_integer_formatted = [[ [intFormat.format(k) for k in l]  if l=4] for l in y]
 				y_without_nan =y
 				y_without_nan_formatted = [[intFormat.format(k) for k in l]  for l in y_without_nan]
 				
 				y_without_nan_formatted[:-1]=y[:-1]
 				y_without_nan_formatted = np.array(y_without_nan_formatted)
-				#print(y_without_nan_formatted)
-				#exit()
-
-				
-
-
 								
 				the_table = plt.table(cellText=y_without_nan_formatted,colLabels=my_xticks,loc='bottom',cellLoc='right',colLoc='right',rowLoc='left')				
 				the_table.set_fontsize(numberFontSize)
@@ -345,17 +309,14 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 
 			# Set Graph title
 		
-			plt.title(titleName,loc='left',fontsize=titleSize,fontweight="regular",color=brown_obermatt,**titlefont)
+			plt.title(titleName+"\n",loc='left',fontsize=titleSize,fontweight="regular",color=brown_obermatt,**titlefont)
 			
 			fig = plt.gcf()
 			# defining portrait or landscape mode
 			if saveFileSizeParam == 'p': 
 				fig.set_size_inches(10.3, 7.3)
-				#fig.set_size_inches(8.3, 4.3)
-				#fig.set_size_inches(5.9, 9.84)
 				dpi = 500
 			else:  
-				#either landscape or if not defined
 				fig.set_size_inches(9.84, 5.9)	
 				dpi = 500
 
@@ -369,8 +330,6 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 			legendtext1 = ReadData['axisfigtext'][0]
 			legendtext2 = ReadData['axisfigtext'][1]
 			
-			
-			
 			# setup the handler instance for the scattered data
 			custom_handler = CustomeLegend.ImageHandler()
 			custom_handler.set_image('./legend_images/legend1.png',image_stretch=(10,1))
@@ -378,11 +337,6 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 			custom_handler2 = CustomeLegend.ImageHandler()
 			custom_handler2.set_image('./legend_images/legend2.png',image_stretch=(10, 1))
 			
-			
-			
-			
-			linetext1='----------------------------------------------------'
-			linetext2='---------------------------------------------------- -------------------------- ------------------------  ------------------------- -------------------------'
 			if saveFileSizeParam=="l":
 				plt.legend([m2, m3],
 					   [legendtext1, legendtext2],
@@ -397,14 +351,13 @@ def operatingIndex(SaveFileType,LineType,FileFormat,TableShow = None):
 		#-------------------- End of designing custome legends------------------------
 			
 			if showTable:
-				plt.subplots_adjust(bottom=0.35,right=0.8,hspace=0.5,wspace=0.5) #Margin size of plot	
-				#plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35)		
+				plt.subplots_adjust(bottom=0.35,right=0.74,top=0.89,hspace=0.5,wspace=0.5)
+				#plt.subplots_adjust(bottom=0.35,right=0.8,hspace=0.5,wspace=0.5) #Margin size of plot	
 			else:
-				plt.subplots_adjust(right=0.8) #Margin size of plot
-				#plt.subplots_adjust(right=0.74) #Margin size of plot			
+				plt.subplots_adjust(bottom=0.18,right=0.74) #Margin size of plot
 
-			plt.savefig(savePath+curTime+saveFile, dpi=dpi, format=PRINT_FORMAT) 	
-			#plt.savefig(savePath+curTime+saveFile, dpi=dpi, bbox_inches='tight', format=PRINT_FORMAT) 
+			plt.savefig(img_file_path+curTime+saveFile, dpi=dpi, format=PRINT_FORMAT) 	
+			#plt.savefig(img_file_path+curTime+saveFile, dpi=dpi, bbox_inches='tight', format=PRINT_FORMAT) 
 			
 			#plt.show()	
 			print(str(incr) + " : " +curTime+saveFile)	

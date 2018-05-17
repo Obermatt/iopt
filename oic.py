@@ -26,8 +26,8 @@ def nan_helper(y):
 
 def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 	try:
-		import ParamValidator as prmValid #validate parmas when run script from command line
-
+		from path_config import img_file_path
+		
 		dataRead = CsvData.readData() # read CSV data multiple file		
 		incr=1
 		for ReadData in dataRead:				
@@ -62,7 +62,7 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 			replaceCountWord = 'Count'
 			
 			#save path from export_path.py
-			from export_path import savePath			
+
 			saveinputFile = ReadData['fileName']
 			saveFile = "_oic_"+saveinputFile+"_"+LineType+"_"+saveFileSizeParam
 					
@@ -82,15 +82,13 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 			percentageFormat = '{:3.1f}'
 			if percentageExist: percentageFormat = '{:3.1f}%'
 
-			# Plot size margin from Bottom
-			#plt.subplots_adjust(bottom=0.2,left=2.5,right=3.5) 
-			plt.subplots_adjust(bottom=0.2) 
-			
 			# -- Start Plot  --		
 			plt.figure()			
 			ax = plt.subplot()
 			ax.spines['right'].set_visible(False) #hide right line of chart
 			ax.spines['top'].set_visible(False) #hide top line of chart
+			#ax.spines['bottom'].set_position(('axes',-0.02))
+			#ax.spines['top'].set_position(('axes',1.02))
 
 			x = np.array(list(range(len(ReadData['xAxisName'])))) # X values total count
 
@@ -133,7 +131,7 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 			plt.plot(y[dottedKey],color='#ff6100',linestyle='',markersize=markerSize,linewidth=lineWidth,marker='o'); 
 			
 			# to set the legend
-			plt.legend(handles=legend_elements,bbox_to_anchor=(1, 0.8),prop={'size': numberFontSize,'weight':'normal'},labelspacing=2,frameon=False)
+			plt.legend(handles=legend_elements,bbox_to_anchor=(1, 0.8),prop={'size': numberFontSize,'weight':'normal','family':legendfont},labelspacing=2,frameon=False)
 			vals = ax.get_yticks()
 
 			# Converted values into percentage value
@@ -202,11 +200,12 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 
 			#Margin size of plot					
 			if showTable:
-				plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35)	
+				#plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35)
+				plt.subplots_adjust(bottom=0.35,right=0.74,top=0.89,hspace=0.5,wspace=0.5)	
 			else:
-				plt.subplots_adjust(right=0.74) #Margin size of plot	
+				plt.subplots_adjust(bottom=0.18,right=0.74) #Margin size of plot
 
-			plt.savefig(savePath+curTime+saveFile, dpi=dpi, format=PRINT_FORMAT)
+			plt.savefig(img_file_path+curTime+saveFile, dpi=dpi, format=PRINT_FORMAT)
 			print(str(incr)+" : " +curTime+saveFile)	
 			incr=incr+1
 			#plt.show()
