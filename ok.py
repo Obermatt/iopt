@@ -96,7 +96,7 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 			# Check if CSV file value is in percentage or not
 			percentageExist = ReadData["perExist"]			
 			percentageFormat = '{:3.0f}'
-			if percentageExist: percentageFormat = '{:3.0f}%'
+			#if percentageExist: percentageFormat = '{:3.0f}%'
 			intFormat = '{:3.0f}'
 			# Plot size margin from Bottom
 			#plt.subplots_adjust(bottom=0.2,left=2.5,right=3.5) 
@@ -130,7 +130,8 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 			my_xticks = ReadData['xAxisName'] # X values data from CSV								
 		
 			from scipy import interpolate # interpolate is used to convert the streight line with curve
-
+			minY = 0
+			maxY = 100
 			legend_elements = []
 			fillData = {}				
 			for data in y:
@@ -153,7 +154,14 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 					f = interpolate.interp1d(np.arange(len(data)), data, kind='cubic') # Interpolate Line
 					xnew = np.arange(0, len(data)-1, 0.01)
 					ynew = f(xnew)	
-					# to set a curve line iprint(nstead of streight line End
+
+					for yn in ynew:
+						if yn > maxY:
+							maxY = yn
+						if yn < minY:
+							minY = yn
+
+					# to set a curve line iprintinstead of streight line End
 					plt.plot(xnew, ynew, color=color[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,label=legendLabel[count], zorder=101) #Set plot final plot
 					legend_elements.append(Line2D([0], [0],color=color[count],label=legendLabel1[count],linestyle=style[count],markersize=markerSize,linewidth=lineWidth,marker=marker[count])) #to set the legend	
 					plt.plot(y[count],color=color[count],linestyle='',markersize=markerSize,linewidth=lineWidth,marker='o', zorder=102); 
@@ -161,7 +169,35 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 					fillData[count] = f(xnew)			
 				count = count+1 
 			# End of loop
+			'''
+			#now setting ysticks again
+			if yMax > 100:
+				if yMin < 0:
+					ax.set_yticks([yMin-2, 0,25,50,75,100, yMax+2])
+				else:
+					ax.set_yticks([0,25,50,75,100, yMax+5])
+			else:
+				if yMin < 0:
+					ax.set_yticks([yMin-2, 0,25,50,75,100])
+				else:
+					ax.set_yticks([0,25,50,75,100])
 
+			vals = ax.get_yticks()
+			
+			# hiding edge values
+			#edgeValueFormat = '{:0.0}'
+			edgeValueFormat = '{:0.0f}'
+			newyVals =[]
+			for vy in vals:
+				if vy < 0:
+					vyx = " "
+				else:
+					vyx = percentageFormat.format(vy)
+				newyVals.append(vyx)
+
+			ax.set_yticklabels(newyVals) 
+			#--end of setting ysticks again
+			'''
 			#from y0 to y1	
 			fill1 = [1,2,3] 
 
@@ -192,12 +228,12 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 			
 			# setup the handler instance for the scattered data
 			custom_handler = CustomeLegend.ImageHandler()
-			custom_handler.set_image('./legend_images/legend1.png',image_stretch=(4,1))
+			custom_handler.set_image('./legend_images/legend1.png',image_stretch=(3,.01))
 
 			if saveFileSizeParam == 'p': 
 				legendx=1
 				legendy=0.8
-				boxx=1.32
+				boxx=1.315
 				if TableShow=="t":
 					boxy=0.10
 				else:
@@ -205,8 +241,12 @@ def okGraph(SaveFileType,LineType,FileFormat,TableShow = None):
 			else:
 				legendx=1
 				legendy=0.95
-				boxx=1.39
-				boxy=0.15
+				boxx=1.330
+
+				if TableShow=="t":
+					boxy=0.10
+				else:
+					boxy=0.28
 			
 			legend1=plt.legend([m2],
 					   [legendtext1],
