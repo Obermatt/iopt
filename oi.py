@@ -1,5 +1,6 @@
 # importing required files and libraries
 import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import datetime
@@ -269,7 +270,7 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
                 the_table = plt.table(cellText=y_without_nan_formatted, colLabels=my_xticks, loc='bottom',
                                       cellLoc='right', colLoc='right', rowLoc='left')
                 the_table.set_fontsize(numberFontSize)
-                the_table.scale(1, 1.2)
+                the_table.scale(1, 1.5)
 
                 # Remove Border of table 1 cell
                 for key, cell in the_table.get_celld().items():

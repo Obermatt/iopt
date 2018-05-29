@@ -1,9 +1,10 @@
 import datetime
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D
 import CsvRead as CsvData #imported python file for CSV read 
-import matplotlib
 import matplotlib.font_manager as font_manager 
 
 import warnings
