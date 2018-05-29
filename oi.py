@@ -23,6 +23,7 @@ PRINT_FORMAT = "png"
 COMPANY_PERFORMANCE_LINE = "s"  # straight line  // i #interpolated
 
 # defining colorcodes
+# defining color and styles for various lines in chart
 lightskyblue_obermatt = '#ACE3E8'
 darkskyblue_obermatt = '#91CCD1'
 blue_obermatt = '#2A90AC'
@@ -63,10 +64,7 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
             COMPANY_PERFORMANCE_LINE = LineType
 
             # Reading input data filename
-            # saveinputFile = sys.argv[1]
             saveinputFile = ReadData['fileName']
-            # saveinputFile=saveinputFile.replace(".csv", "")
-
 
             # save path from export_path.py
             saveFile = "_oi_" + saveinputFile + "_" + LineType + "_" + saveFileSizeParam
@@ -74,18 +72,18 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
             # reading chart title (#titleName = 'Operating Index \nEBIT Margin' # Static Title Entry)
             titleName = ReadData['title'][0]
             titleName = titleName.replace('\\n', '\n')
+
             # table titleseq
             tabletitleName = ReadData['tabletitle'][-1]
-            # defining color and styles for various lines in chart
-            # TOP COLOR: #afdce3 //lightskyblue
-            # ORANGE COLOR:#ff7800 //orange
-            # middle Line Color:#2e91ad //blue
-            # Bottom COLOR: #91ccd1 //darkskyblue
 
             color = [darkskyblue_obermatt, blue_obermatt, lightskyblue_obermatt, orange_obermatt,
-                     blue_obermatt]  # COLOR_CODE of line
-            style = ['-', '-', '-', '-', '']  # line type
-            marker = ['', '', '', 'o', '']  # Marker type
+                     blue_obermatt]
+					 
+			# line type
+            style = ['-', '-', '-', '-', '']
+
+			# Marker type		
+            marker = ['', '', '', 'o', '']  
 
             # legend names reading from csv data file
             legendLabel = ReadData['legendName']
@@ -99,6 +97,7 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
             percentageFormatYLables = '{:3.0f}%'
             if percentageExist: percentageFormat = '{:3.1f}%'
             intFormat = '{:3.0f}'
+			
             # Marker width size
             markerSize = 5
 
@@ -106,11 +105,13 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
             lineWidthArr = [2, 1, 2, 1, 1]
 
             # Orange and blue Line width
-            lineWidth = 1.5  # Line width value
+            lineWidth = 1.5  
 
-            dottedKey = 0  # company name row id
+			# company name row id
+            dottedKey = 0  
 
-            markerColor = '#ff6100'  # marker color
+			# marker color
+            markerColor = '#ff6100'  
 
             # title font size
             titleSize = 16
@@ -119,14 +120,16 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
             numberFontSize = 10.5
 
             plt.figure()
+			
+			#Disabling Autoscale for y axis
             plt.autoscale(enable=False, axis='y');
             ax = plt.subplot()
 
             # hide right and left line of chart
             ax.spines['right'].set_visible(False)
             ax.spines['left'].set_visible(False)
-            ax.spines['bottom'].set_position(('axes', -0.005))
-            ax.spines['top'].set_position(('axes', 1.005))
+            #ax.spines['bottom'].set_position(('axes', -0.005))
+            #ax.spines['top'].set_position(('axes', 1.005))
 
             # X Axis Data points
             x = np.array(list(range(len(ReadData['xAxisName']))))
@@ -143,11 +146,10 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
             # x Axis Data points
             my_xticks = ReadData['xAxisName']
 
-            # my_xticks = ['','','','','','','','','','']
-
             # set X axis replace static number with original key value
             plt.xticks(x, my_xticks, fontsize=numberFontSize)
-            # interpolation technique is used to convert the straight line with curve
+			
+            # interpolation technique is used to convert the straight line with curve --  Importing base library
             from scipy import interpolate
 
             # 0- companydata
@@ -155,33 +157,34 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
             # 2-Median
             # 3-25 Percentile
             # 4-Count
-            color = [orange_obermatt, lightskyblue_obermatt, blue_obermatt, darkskyblue_obermatt,
-                     blue_obermatt]  # COLOR_CODE of line
-            # color = [lightskyblue_obermatt,blue_obermatt,darkskyblue_obermatt,orange_obermatt,blue_obermatt] # COLOR_CODE of line
+			
+			# COLOR_CODE of line
+            color = [orange_obermatt, 
+					lightskyblue_obermatt, 
+					blue_obermatt, 
+					darkskyblue_obermatt,
+                    blue_obermatt]  
 
             # Loop start count
             count = 0
             fillData = {}
-            # print(y)
             lastcolumncount = len(y) - 1
-            # print(len(y))
-            # exit()
+            
             for data in y:
                 if count == 0 and COMPANY_PERFORMANCE_LINE == "s":
-                    # data  = ["" if v is 'NAN' else v for v in data] #replace blank value with np.nan
-                    # Draw staright Line
                     f = interpolate.interp1d(np.arange(len(data)), data, kind='linear')
-
                 else:
                     # interpolate value if found Nan value in array
                     data = np.array(data)
                     nans, xdata = nan_helper(data)
                     data[nans] = np.interp(xdata(nans), xdata(~nans), data[~nans])
+					
                     # Draw Curve Linenan
                     if count == 0:
                         f = interpolate.interp1d(np.arange(len(data)), data, kind='cubic')  #
                     else:
                         f = interpolate.interp1d(np.arange(len(data)), data, kind='cubic')
+				
                 xnew = np.arange(0, len(data) - 1, 0.01)
                 ynew = f(xnew)
 
@@ -266,7 +269,7 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
                 the_table = plt.table(cellText=y_without_nan_formatted, colLabels=my_xticks, loc='bottom',
                                       cellLoc='right', colLoc='right', rowLoc='left')
                 the_table.set_fontsize(numberFontSize)
-                the_table.scale(1, 1.5)
+                the_table.scale(1, 1.2)
 
                 # Remove Border of table 1 cell
                 for key, cell in the_table.get_celld().items():
@@ -309,7 +312,7 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
 
             # Set Graph title
 
-            plt.title(titleName + "\n", loc='left', fontsize=titleSize, fontweight="regular", color=brown_obermatt,
+            plt.title(titleName, loc='left', fontsize=titleSize, fontweight="regular", color=brown_obermatt,
                       **titlefont)
 
             fig = plt.gcf()
@@ -366,8 +369,6 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
             # plt.show()
             print(str(incr) + " : " + curTime + saveFile)
             incr = incr + 1
-
-
 
     except Exception as e:
 

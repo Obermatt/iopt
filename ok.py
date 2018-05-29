@@ -106,10 +106,10 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
 
             ax.spines['right'].set_visible(False)  # hide right line of chart
             ax.spines['left'].set_visible(False)  # hide left line of chart
-            ax.spines['bottom'].set_position(('axes', -0.005))
-            ax.spines['bottom'].set_linewidth(0.5)
-            ax.spines['top'].set_position(('axes', 1.005))
-            ax.spines['top'].set_linewidth(0.5)
+            #ax.spines['bottom'].set_position(('axes', -0.005))
+            #ax.spines['bottom'].set_linewidth(0.5)
+            #ax.spines['top'].set_position(('axes', 1.005))
+            #ax.spines['top'].set_linewidth(0.5)
             x = np.array(list(range(len(ReadData['xAxisName']))))  # X values total count
 
             yAxisValue = ReadData['axisValue']  # Y values data from CSV
