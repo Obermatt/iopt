@@ -16,7 +16,7 @@ def readData():
 	finalArr1 = []
 	for readFileNameParam in os.listdir(csv_file_path): # Read All the files inside file folder
 		if readFileNameParam.endswith(".csv") and readFileNameParam.startswith("oi"): #Read only CSV file  & start with oi name
-			filename = 'file/'+readFileNameParam			
+			filename = csv_file_path+readFileNameParam			
 			csvRowCount	 = 0;	
 			data = {}	
 			arrFirst = []
