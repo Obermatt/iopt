@@ -202,9 +202,9 @@ def salesGrowth(SaveFileType,LineType,FileFormat,TableShow = None):
 			#Margin size of plot					
 			if showTable:
 				#plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35)
-				plt.subplots_adjust(bottom=0.35,right=0.74,top=0.89,hspace=0.5,wspace=0.5)	
+				plt.subplots_adjust(bottom=0.35,right=0.70,left=0.08,top=0.89,hspace=0.5,wspace=0.5)	
 			else:
-				plt.subplots_adjust(bottom=0.18,right=0.74) #Margin size of plot
+				plt.subplots_adjust(bottom=0.18,right=0.70,left=0.08) #Margin size of plot
 
 			plt.savefig(img_file_path+curTime+saveFile, dpi=dpi, format=PRINT_FORMAT)
 			print(str(incr)+" : " +curTime+saveFile)	
