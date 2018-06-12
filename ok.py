@@ -242,25 +242,25 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
             if saveFileSizeParam == 'p':
                 legendx = 1
                 legendy = 0.8
-                boxx = 1.315
+                boxx = 1
                 if TableShow == "t":
-                    boxy = 0.10
+                    boxy = 0.02
                 else:
-                    boxy = 0.25
+                    boxy = 0.02
             else:
                 legendx = 1
                 legendy = 0.95
-                boxx = 1.330
+                boxx = 1
 
                 if TableShow == "t":
-                    boxy = 0.10
+                    boxy = 0.02
                 else:
-                    boxy = 0.28
+                    boxy = 0.02
 
             legend1 = plt.legend([m2],
                                  [legendtext1],
                                  handler_map={m2: custom_handler},
-                                 labelspacing=2, loc='right', bbox_to_anchor=(boxx, boxy), frameon=False,
+                                 labelspacing=2, loc='lower left', bbox_to_anchor=(boxx, boxy), frameon=False,
                                  prop={'size': numberFontSize, 'weight': 'normal', 'family': legendfont})
 
             # -------------------- End of designing custome legends------------------------
@@ -348,9 +348,9 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
             # Margin size of plot
             if showTable:
                 # plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35)
-                plt.subplots_adjust(bottom=0.35, right=0.74, top=0.89, hspace=0.5, wspace=0.5)
+                plt.subplots_adjust(bottom=0.35, right=0.70,left=0.08, top=0.89, hspace=0.5, wspace=0.5)
             else:
-                plt.subplots_adjust(bottom=0.18, right=0.74)  # Margin size of plot
+                plt.subplots_adjust(bottom=0.18, right=0.70,left=0.08)  # Margin size of plot
 
             plt.savefig(img_file_path + curTime + saveFile, dpi=dpi, format=PRINT_FORMAT)
             print(str(incr) + " : " + curTime + saveFile);

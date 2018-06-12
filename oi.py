@@ -236,18 +236,18 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
                 showTable = False  # default display Table
                 # boxx=0.26
                 # boxy=-0.15
-                boxx = 1.35
-                boxy = 0.58
+                boxx = 1
+                boxy = 0.50
             else:
                 showTable = False
                 # boxx=0.26
                 # boxy=-0.15
-                boxx = 1.35
-                boxy = 0.58
+                boxx = 1
+                boxy = 0.50
                 if TableShow == 't':  # if user enter 1 display table else dont display the table
                     showTable = True
-                    boxx = 1.35
-                    boxy = 0.58
+                    boxx = 1
+                    boxy = 0.50
                     saveFile += "_t"
 
             saveFile += "." + PRINT_FORMAT
@@ -347,22 +347,22 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
                 plt.legend([m2, m3],
                            [legendtext1, legendtext2],
                            handler_map={m2: custom_handler, m3: custom_handler2},
-                           labelspacing=1, loc='right', bbox_to_anchor=(boxx, boxy), frameon=False,
+                           labelspacing=1, loc='center left', bbox_to_anchor=(boxx, boxy), frameon=False,
                            prop={'family': legendfont, 'size': 11})
             else:
                 plt.legend([m2, m3],
                            [legendtext1, legendtext2],
                            handler_map={m2: custom_handler, m3: custom_handler2},
-                           labelspacing=1, loc='right', bbox_to_anchor=(boxx, boxy), frameon=False,
+                           labelspacing=1, loc='left', bbox_to_anchor=(boxx, boxy), frameon=False,
                            prop={'family': legendfont, 'size': 11})
 
             # -------------------- End of designing custome legends------------------------
 
             if showTable:
-                plt.subplots_adjust(bottom=0.35, right=0.74, top=0.89, hspace=0.5, wspace=0.5)
+                plt.subplots_adjust(bottom=0.35, right=0.70, left=0.08, top=0.89, hspace=0.5, wspace=0.5)
             # plt.subplots_adjust(bottom=0.35,right=0.8,hspace=0.5,wspace=0.5) #Margin size of plot
             else:
-                plt.subplots_adjust(bottom=0.18, right=0.74)  # Margin size of plot
+                plt.subplots_adjust(bottom=0.18, right=0.70, left=0.08)  # Margin size of plot
 
             plt.savefig(img_file_path + curTime + saveFile, dpi=dpi, format=PRINT_FORMAT)
             # plt.savefig(img_file_path+curTime+saveFile, dpi=dpi, bbox_inches='tight', format=PRINT_FORMAT)
@@ -372,11 +372,9 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
             incr = incr + 1
 
     except Exception as e:
-
         print("Something Went wrong at Oi chart! Unable to process your request.")
         print(e)
     ## End of program
-
 
 # reading file arguments
 from args_reader import *
