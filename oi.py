@@ -263,7 +263,6 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
 
                 y_without_nan = y
                 y_without_nan_formatted = [[intFormat.format(k) for k in l] for l in y_without_nan]
-
                 y_without_nan_formatted[:-1] = y[:-1]
                 y_without_nan_formatted = np.array(y_without_nan_formatted)
 

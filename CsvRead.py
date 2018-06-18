@@ -5,6 +5,13 @@ import DateTime
 import matplotlib.pyplot as plt
 import numpy as np
 
+def floatData(v):
+        doubleFormat = '{:3.1f}'
+        if v is '' :
+                return np.nan
+        else:
+                v=float(v)
+                return doubleFormat.format(v)
 
 
 def readData():
@@ -61,10 +68,11 @@ def readData():
 					# replace % from the value
 					csvRow = [w.replace('%', '') for w in csvRow]			
 					# Line multidimentional value			
-					arrThree.append([np.nan if v is '' else v for v in csvRow[:-5]]) # replace blank value with none
+					arrThree.append([floatData(v) for v in csvRow[:-5]]) # replace blank value with none
 				
 				# Start - to get Y min & max value if user not set Y min or max value then find min max from array
 				arrThree = [list(map(float, i)) for i in arrThree[:5]] # All the data
+				
 				totalVal = [list(map(float, i)) for i in arrThree[:4]] # skipped count row
 				exceedYAxis = 3
 				if arrSeven == "" or arrEight == "":									
