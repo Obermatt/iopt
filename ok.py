@@ -115,10 +115,14 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
             x = np.array(list(range(len(ReadData['xAxisName']))))  # X values total count
 
             yAxisValue = ReadData['axisValue']  # Y values data from CSV
+            yAxisLabelValues = ReadData['axisLabelValues']
+            
             # added below to set Y axis value static & dynamic Start
             yMin = ReadData['yMin']
             yMax = ReadData['yMax']
             y = np.array(yAxisValue)
+            z = np.array(yAxisLabelValues)
+            
             # plt.ylim(int(yMin),int(yMax))
 
             ax.set_yticks([0, 25, 50, 75, 100])
@@ -175,8 +179,16 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
                              marker='o', zorder=102);
 
                     fillData[count] = f(xnew)
+                #--- newly added code ---- Showing Annotations
+                print(len(z))
+                if len(z) > 0 and count < len(z):
+                    print(data)
+                    for i,j,k in zip(x,data,z[count]):	# added to display value on marker
+                        ax.annotate(k,xy=(i,j),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize, zorder=105)	#converted values into percentage value	
+                #---end of newly added code -------------------
                 count = count + 1
             # End of loop
+            
             '''
             #now setting ysticks again
             if yMax > 100:
@@ -219,7 +231,7 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
             fillArr1 = [50, 50.5, 75]
             for a, b in zip(fill1, fill2):
                 plt.fill_between(x, fillArr[count1], fillArr1[count1], color=colorFill[count1], alpha='1',
-                                 interpolate=False, zorder=100)
+                                 interpolate=False, zorder=88)
                 count1 = count1 + 1
 
             # to set the legend
@@ -233,8 +245,8 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
                           linewidth=1)
 
             legendtext1 = ReadData['axisfigtext'][0]
-            legendtext2 = ReadData['axisfigtext'][1]
-
+            #legendtext2 = ReadData['axisfigtext'][1]
+            
             # setup the handler instance for the scattered data
             custom_handler = CustomeLegend.ImageHandler()
             custom_handler.set_image('./legend_images/legend1.png', image_stretch=(3, .01))
