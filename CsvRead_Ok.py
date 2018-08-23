@@ -21,13 +21,15 @@ def readData():
             arrTwo = []
             arrThree = []
             axisLabelValues = []
+            axisLabelLegendNames = []
             arrFour = []
             arrFive = []
             arrSix = []
             arrSeven = []
             arrEight = []
             finalArr	= {}
-            perExist = False	
+            perExist = False
+            dot_label_values_started = False
             with open(filename,'rt') as file: # Read CSV file
                 reader=csv.reader(file)
                 data=list(reader)				
@@ -39,33 +41,38 @@ def readData():
                         arrFirst = csvRow[:-5]
                         arrSix = csvRow[:-4] 
                         continue
-                    if " Ratio" in csvRow[-5]:
-                        axisLabelValues.append(csvRow[:-5]) # replace blank value with none
-                    else:
-                        # All Legend name
-                        arrTwo.append(csvRow[len(csvRow) - 5])
-                        if any("%" in str for str in csvRow): #to check value is in percentage format or normal format
-                            perExist = True; # if percentage value exist in CSV file
-                        # cutomized Legend text
-                        arrFour.append(csvRow[len(csvRow) - 4]) 
-                        # chart title
-                        arrFive.append(csvRow[len(csvRow) - 3])
                         
-                        #arrSeven.append(csvRow[len(csvRow[:1]) - 2])
-                        if csvRowCount == 2:
-                            # Y mincsvRow
-                            arrSeven = csvRow[len(csvRow) - 2]
-                            # Y max
-                            arrEight = csvRow[len(csvRow) - 1]
-                 
-                        #to check value is in percentage format or normal format			
-                        if any("%" in str for str in csvRow): 
-                            # if percentage value exist in CSV file
-                            csvRowerarrSevenExist = True 
-                        # replace % from the value
-                        csvRow = [w.replace('%', '') for w in csvRow]
-                        # Line multidimentional value			
-                        arrThree.append([np.nan if v is '' else int(round(float (v))) for v in csvRow[:-5]]) # replace blank value with none
+                    if csvRow[0] == "dot_labels":
+                        dot_label_values_started = True
+                        continue
+                    else:
+                        if dot_label_values_started == True:
+                            axisLabelValues.append(csvRow[:-4])
+                        else:
+                            # All Legend name
+                            arrTwo.append(csvRow[len(csvRow) - 5])
+                            if any("%" in str for str in csvRow): #to check value is in percentage format or normal format
+                                perExist = True; # if percentage value exist in CSV file
+                            # cutomized Legend text
+                            arrFour.append(csvRow[len(csvRow) - 4]) 
+                            # chart title
+                            arrFive.append(csvRow[len(csvRow) - 3])
+                            
+                            #arrSeven.append(csvRow[len(csvRow[:1]) - 2])
+                            if csvRowCount == 2:
+                                # Y mincsvRow
+                                arrSeven = csvRow[len(csvRow) - 2]
+                                # Y max
+                                arrEight = csvRow[len(csvRow) - 1]
+                     
+                            #to check value is in percentage format or normal format			
+                            if any("%" in str for str in csvRow): 
+                                # if percentage value exist in CSV file
+                                csvRowerarrSevenExist = True 
+                            # replace % from the value
+                            csvRow = [w.replace('%', '') for w in csvRow]
+                            # Line multidimentional value			
+                            arrThree.append([np.nan if v is '' else int(round(float (v))) for v in csvRow[:-5]]) # replace blank value with none
                 
                 # Start - to get Y min & max value if user not set Y min or max value then find min max from array
                 #arrThree = [list(map(float, i)) for i in arrThree[:6]] # All the data
@@ -76,6 +83,7 @@ def readData():
                 finalArr['legendName'] = arrTwo
                 finalArr['axisValue'] = arrThree
                 finalArr['axisLabelValues'] = axisLabelValues
+                finalArr['axisLabelLegendNames'] = axisLabelLegendNames
                 finalArr['axisfigtext'] = arrFour
                 finalArr['title'] = arrFive  
                 finalArr['perExist'] = perExist
