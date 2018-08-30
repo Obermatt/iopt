@@ -182,14 +182,14 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
                     fillData[count] = f(xnew)
                 #--- newly added code ---- Showing Annotations
                 
-                    if len(z) > 0 and count <= len(z):
-                        n = [m for m in z if legendLabel[count] in m]
-                        if len(n)>0 :
-                            anCounter = 0
-                            for i,j in zip(x,data):	# added to display value on marker
-                                if n[0][anCounter] !='':
-                                    ax.annotate(n[0][anCounter],xy=(i,j),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize,color=color[count], zorder=105)	#converted values into percentage value	
-                                anCounter = anCounter+1
+                if len(z) > 0 and count <= len(z):
+                    n = [m for m in z if legendLabel[count] in m]
+                    if len(n)>0 :
+                        anCounter = 0
+                        for i,j in zip(x,data):	# added to display value on marker
+                            if n[0][anCounter] !='':
+                                ax.annotate(n[0][anCounter],xy=(i,j),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize,color=color[count], zorder=105)	#converted values into percentage value	
+                            anCounter = anCounter+1
                 #---end of newly added code -------------------
                 count = count + 1
             # End of loop
