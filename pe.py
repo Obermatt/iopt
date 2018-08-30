@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D
 import legend_handler as CustomeLegend
-import CsvRead_Ok as CsvData  # imported python file for CSV read
+import CsvRead_PE_ratio as CsvData  # imported python file for CSV read
 
 import matplotlib.font_manager as font_manager
 import warnings
@@ -37,7 +37,7 @@ def nan_helper(y):
 
 # parameter: {filename}.py {savefilename} {filesize} {sourcecsvfile}.csv {table show[0,1]}
 
-def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
+def peGraph(SaveFileType, LineType, FileFormat, TableShow=None):
     try:
         from path_config import img_file_path
 
@@ -69,7 +69,7 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
             titleSize = 16
 
             markerSize = 5  # Marker width size
-            lineWidth = 2  # Line width valuesaveFileNameParam
+            lineWidth = 1  # Line width valuesaveFileNameParam
             count = 0  # Loop start count
             dottedKey = 0  # define where we need a dotted key on which line
             titleName = ReadData['title'][0]
@@ -79,7 +79,7 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
             replaceCountWord = 'Count'
 
             saveinputFile = ReadData['fileName']
-            saveFile = "_ok_" + saveinputFile + "_" + LineType + "_" + saveFileSizeParam
+            saveFile = "_PE_" + saveinputFile + "_" + LineType + "_" + saveFileSizeParam
 
             # color code of line
             color = [orange_obermatt, red_obermatt, yellow_obermatt, green_obermatt, violett_obermatt, lila_obermatt]
@@ -116,14 +116,11 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
 
             yAxisValue = ReadData['axisValue']  # Y values data from CSV
             yAxisLabelValues = ReadData['axisLabelValues']
-            
             # added below to set Y axis value static & dynamic Start
             yMin = ReadData['yMin']
             yMax = ReadData['yMax']
             y = np.array(yAxisValue)
             z = np.array(yAxisLabelValues)
-            
-            
             # plt.ylim(int(yMin),int(yMax))
 
             ax.set_yticks([0, 25, 50, 75, 100])
@@ -133,7 +130,32 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
             ax.set_yticklabels([percentageFormat.format(x) for x in vals], fontsize=numberFontSize)
 
             my_xticks = ReadData['xAxisName']  # X values data from CSV
-
+            
+            #plot 3 lines
+            legend_elements1 = []
+            colorFill_temp = [darkskyblue_obermatt, blue_obermatt, lightskyblue_obermatt]
+            style_temp = ['--','-','--']
+            ydata_temp = [75,50,25]
+            legend_label_temp = ['Top 25%','Median','Low 25%']
+            count_temp=0
+            while count_temp < 3:
+                y_temp = []
+                
+                for x1 in x:
+                    y_temp.append(ydata_temp[count_temp])
+                y_temp_np = np.array(y_temp)
+                colorFill_temp = [darkskyblue_obermatt, blue_obermatt, lightskyblue_obermatt]
+                style_temp = ['--','-','--']
+                plt.plot(x, y_temp_np, color=colorFill_temp[count_temp], linestyle=style_temp[count_temp], markersize=markerSize,
+                                 linewidth=1, label="Top 25%", zorder=99)  # Set plot final plot
+                legend_elements1.append(
+                        Line2D([0], [0], color=colorFill_temp[count_temp], label=legend_label_temp[count_temp], linestyle=style_temp[count_temp],
+                               markersize=0, linewidth=1))
+                count_temp = count_temp+1
+                
+            #end of 3 lines
+            
+            
             from scipy import interpolate  # interpolate is used to convert the streight line with curve
             minY = 0
             maxY = 100
@@ -181,19 +203,11 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
 
                     fillData[count] = f(xnew)
                 #--- newly added code ---- Showing Annotations
-                
-                if len(z) > 0 and count <= len(z):
-                    n = [m for m in z if legendLabel[count] in m]
-                    if len(n)>0 :
-                        anCounter = 0
-                        for i,j in zip(x,data):	# added to display value on marker
-                            if n[0][anCounter] !='':
-                                ax.annotate(n[0][anCounter],xy=(i,j),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize, zorder=105)	#converted values into percentage value	
-                            anCounter = anCounter+1
+                for i,j,k in zip(x,data,z[count]):	# added to display value on marker
+                    ax.annotate(k,xy=(i,j),horizontalalignment='right',verticalalignment='bottom',fontsize=numberFontSize)	#converted values into percentage value	
                 #---end of newly added code -------------------
                 count = count + 1
             # End of loop
-            
             '''
             #now setting ysticks again
             if yMax > 100:
@@ -230,17 +244,20 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
             fill2 = [2, 3, 4]
 
             # COLOR_CODE
-            colorFill = [darkskyblue_obermatt, blue_obermatt, lightskyblue_obermatt]
-            count1 = 0
-            fillArr = [25, 50, 50.5]
-            fillArr1 = [50, 50.5, 75]
-            for a, b in zip(fill1, fill2):
-                plt.fill_between(x, fillArr[count1], fillArr1[count1], color=colorFill[count1], alpha='1',
-                                 interpolate=False, zorder=88)
-                count1 = count1 + 1
+            # colorFill = [darkskyblue_obermatt, blue_obermatt, lightskyblue_obermatt]
+            # count1 = 0
+            # fillArr = [25, 50, 50.5]
+            # fillArr1 = [50, 50.5, 75]
+            # for a, b in zip(fill1, fill2):
+                # plt.fill_between(x, fillArr[count1], fillArr1[count1], color=colorFill[count1], alpha='1',
+                                 # interpolate=False, zorder=100)
+                # count1 = count1 + 1
 
             # to set the legend
 
+            
+            
+            
             # -------------------- Start of designing custom legends------------------------
             m2, = ax.plot([], [])
             m3, = ax.plot([], [])
@@ -249,9 +266,12 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
             m4, = ax.plot([], [], color=orange_obermatt, marker='o', linestyle='none', solid_joinstyle='round',
                           linewidth=1)
 
+                          
+                          
+                          
             legendtext1 = ReadData['axisfigtext'][0]
             #legendtext2 = ReadData['axisfigtext'][1]
-            
+
             # setup the handler instance for the scattered data
             custom_handler = CustomeLegend.ImageHandler()
             custom_handler.set_image('./legend_images/legend1.png', image_stretch=(3, .01))
@@ -260,25 +280,37 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
                 legendx = 1
                 legendy = 0.8
                 boxx = 1
-                boxy = 0.02
+                boxy = 0.05
             else:
                 legendx = 1
                 legendy = 0.95
                 boxx = 1
-                boxy = 0.02
+                boxy = 0.05
 
-            legend1 = plt.legend([m2],
-                                 [legendtext1],
-                                 handler_map={m2: custom_handler},
-                                 labelspacing=2, loc='lower left', bbox_to_anchor=(boxx, boxy), frameon=False,
-                                 prop={'size': numberFontSize, 'weight': 'normal', 'family': legendfont})
+            # legend1 = plt.legend([m2],
+                                 # [legendtext1],
+                                 # handler_map={m2: custom_handler},
+                                 # labelspacing=2, loc='lower left', bbox_to_anchor=(boxx, boxy), frameon=False,
+                                 # prop={'size': numberFontSize, 'weight': 'normal', 'family': legendfont})
 
             # -------------------- End of designing custome legends------------------------
 
-
-            plt.legend(handles=legend_elements, bbox_to_anchor=(legendx, legendy), loc='upper left',
+            # for legend_temp in legend_elements1:
+                # legend_elements.append(legend_temp)
+            
+            #plt.legend(handles=legend_elements1, bbox_to_anchor=(1, 0.6),
+                       # prop={'size': numberFontSize, 'weight': 'normal', 'family': legendfont}, labelspacing=1,
+                       # frameon=False)
+            
+            
+            legend1 = plt.legend(handles=legend_elements1, loc="lower left", bbox_to_anchor=(boxx, boxy),
+                       prop={'size': numberFontSize, 'weight': 'normal', 'family': legendfont}, labelspacing=1,
+                       frameon=True)
+            
+            plt.legend(handles=legend_elements, bbox_to_anchor=(legendx, legendy), loc="upper left",
                        prop={'size': numberFontSize, 'weight': 'normal', 'family': legendfont}, labelspacing=2,
                        frameon=False)
+                       
             plt.gca().add_artist(legend1)
             vals = ax.get_yticks()
 
@@ -358,9 +390,9 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
             # Margin size of plot
             if showTable:
                 # plt.subplots_adjust(bottom=0.35,right=0.74,top=0.92,hspace=0.25,wspace=0.35)
-                plt.subplots_adjust(bottom=0.28, right=0.70,left=0.05, top=0.89, hspace=0.5, wspace=0.5)
+                plt.subplots_adjust(bottom=0.35, right=0.70,left=0.08, top=0.89, hspace=0.5, wspace=0.5)
             else:
-                plt.subplots_adjust(bottom=0.11, right=0.70,left=0.05)  # Margin size of plot
+                plt.subplots_adjust(bottom=0.18, right=0.70,left=0.08)  # Margin size of plot
 
             plt.savefig(img_file_path + curTime + saveFile, dpi=dpi, format=PRINT_FORMAT)
             print(str(incr) + " : " + curTime + saveFile);
@@ -373,5 +405,5 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
 
 from args_reader import *
 
-print("\nOk graph file generation started:")
-okGraph(SaveFileType, LineType, FileFormat, TableShow)
+print("\nPE graph file generation started:")
+peGraph(SaveFileType, LineType, FileFormat, TableShow)

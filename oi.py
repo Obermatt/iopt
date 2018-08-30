@@ -358,10 +358,10 @@ def operatingIndex(SaveFileType, LineType, FileFormat, TableShow=None):
             # -------------------- End of designing custome legends------------------------
 
             if showTable:
-                plt.subplots_adjust(bottom=0.35, right=0.70, left=0.08, top=0.89, hspace=0.5, wspace=0.5)
+                plt.subplots_adjust(bottom=0.28, right=0.70, left=0.05, top=0.89, hspace=0.5, wspace=0.5)
             # plt.subplots_adjust(bottom=0.35,right=0.8,hspace=0.5,wspace=0.5) #Margin size of plot
             else:
-                plt.subplots_adjust(bottom=0.18, right=0.70, left=0.08)  # Margin size of plot
+                plt.subplots_adjust(bottom=0.11, right=0.70, left=0.05)  # Margin size of plot
 
             plt.savefig(img_file_path + curTime + saveFile, dpi=dpi, format=PRINT_FORMAT)
             # plt.savefig(img_file_path+curTime+saveFile, dpi=dpi, bbox_inches='tight', format=PRINT_FORMAT)
