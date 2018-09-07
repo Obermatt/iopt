@@ -122,7 +122,7 @@ def okGraph(SaveFileType, LineType, FileFormat, TableShow=None):
             yMax = ReadData['yMax']
             y = np.array(yAxisValue)
             z = np.array(yAxisLabelValues)
-            
+         
             
             # plt.ylim(int(yMin),int(yMax))
 
