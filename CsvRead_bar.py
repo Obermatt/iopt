@@ -12,7 +12,7 @@ def readData():
     #readFileNameParam = sys.argv[1] #read CSV file	
     finalArr1 = []
     for readFileNameParam in os.listdir(csv_file_path): # Read All the files inside file folder
-        if readFileNameParam.endswith(".csv") and readFileNameParam.startswith("cdax"): #Read only CSV file & start with ok name
+        if readFileNameParam.endswith(".csv") and readFileNameParam.startswith("bar"): #Read only CSV file & start with ok name
             filename = csv_file_path+readFileNameParam			
             csvRowCount	 = 0;	
             data = {}	
@@ -34,7 +34,7 @@ def readData():
                 #filename without extension
                 #print(finalArr)           
                 readFileNameParam=readFileNameParam.replace(".csv", "")
-                readFileNameParam=readFileNameParam.replace("cdax_", "")
+                readFileNameParam=readFileNameParam.replace("bar_", "")
 
                 finalArr['fileName'] = readFileNameParam
                 finalArr1.append(finalArr)

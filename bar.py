@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D
 import legend_handler as CustomeLegend
-import CsvRead_cdax as CsvData  # imported python file for CSV read
+import CsvRead_bar as CsvData  # imported python file for CSV read
 
 import matplotlib.font_manager as font_manager
 import warnings
@@ -31,7 +31,7 @@ def cdaxGraph():
         
         for ReadData in dataRead:
             saveinputFile = ReadData['fileName']
-            saveFile = "_CDAX_" + saveinputFile + "." + SaveFileType
+            saveFile = "_bar_" + saveinputFile + "." + SaveFileType
             now = datetime.datetime.now()
             curTime = now.strftime("%Y_%m_%d")
             
@@ -109,8 +109,11 @@ def cdaxGraph():
             ax.yaxis.set_tick_params(length=0)
             plt.subplots_adjust(left=0.6, right=0.99, top=1, bottom=0.2)
             plt.tight_layout()
-            plt.savefig(img_file_path + curTime + saveFile,dpi=1500, format=SaveFileType)
-            plt.show()    
+            finalFileName = curTime + saveFile
+            plt.savefig(img_file_path + finalFileName,dpi=1500, format=SaveFileType)
+            print(str(incr) + " : " + finalFileName);
+            incr = incr + 1
+            #plt.show()    
     except Exception as e:
         print("Something Went wrong at OK chart! Unable to process your request.")
         print(e)
@@ -136,5 +139,5 @@ if showSyntax==True:
 	print("\t Parameters: <outputformat>")
 	print("\t\t output formats -- svg / png")
 else:
-    print("\nCDAX graph file generation started:")
+    print("\nBar graph file generation started:")
     cdaxGraph()
