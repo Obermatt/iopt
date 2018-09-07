@@ -83,15 +83,15 @@ def cdaxGraph():
                     plt.plot(fix_x, fix_y, color="white", linewidth=10)  # Set plot final plot
                     
                     if(m1<24):
-                        colorValue = "#ec5958" #"red"
+                        colorValue = "#E24C4C" #"red"
                     else:
                         if(m1<50):
-                            colorValue = "#f8f17f" #"yellow"
+                            colorValue = "#F2EA48" #"yellow"
                         else:
                             if(m1<75):
-                                colorValue = "#b0d754" #"lightgreen"
+                                colorValue = "#A4CB49" #"lightgreen"
                             else:
-                                colorValue = "#79a240" #"green"
+                                colorValue = "#6C8E40" #"green"
                             
                         
                     plt.plot(x_new, y_new, color=colorValue,linewidth=10)  # Set plot final plot
