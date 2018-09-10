@@ -14,8 +14,6 @@ import matplotlib.patheffects as pe
 
 warnings.filterwarnings("ignore")
 
-
-
 # below function is used to convert nan value to default interpolate value between of two numbers
 def nan_helper(y):
     return np.isnan(y), lambda z: z.nonzero()[0]
@@ -45,15 +43,18 @@ def cdaxGraph():
             ax = plt.subplot()
 
             ax.spines['right'].set_visible(False)  # hide right line of chart
+            #ax.spines['left'].set_position(('axes',5))
+            ax.spines['bottom'].set_position(('axes',5))
             ax.spines['left'].set_visible(False)  # hide left line of chart
+            
             ax.spines['top'].set_visible(False)  # hide top line of chart
             ax.spines['bottom'].set_visible(False)  # hide bottom line of chart
             
             barValues = []
             barYValue = 90
-            decrementBy = 2 #bardecrement
-            diffValue = 12
-            diffSpace = 12
+            decrementBy = 12 #bardecrement
+            diffValue = 10
+            diffSpace = 10
             incr2 = 0
             axisValues = ReadData['axisValues']
             axisNames = ReadData['axisNameValues']
@@ -62,7 +63,7 @@ def cdaxGraph():
             
             for row in y:
                 barValues.append(barYValue)
-                rowStart = 10
+                rowStart = 30
                 for m in row:
                     y1 = barYValue
                     x1 = rowStart
@@ -95,7 +96,7 @@ def cdaxGraph():
                             
                         
                     plt.plot(x_new, y_new, color=colorValue,linewidth=10)  # Set plot final plot
-                    ax.annotate(m1,xy=(x1-2,y1-0.4),horizontalalignment='right',verticalalignment='bottom',fontsize=5, zorder=105,**garamondFont)	#converted values into percentage value	
+                    ax.annotate(m1,xy=(x1-2,y1-4),horizontalalignment='right',verticalalignment='bottom',fontsize=7, zorder=105,**garamondFont)	#converted values into percentage value	
                     rowStart = x2 + diffSpace
                     
                 incr2 = incr2+1
@@ -105,15 +106,36 @@ def cdaxGraph():
             ax.axis([0,102,barYValue-10,100])
             yax = ax.set_yticks(barValues)
             yax = ax.get_yticks()
-            ax.set_yticklabels(axisNames, fontsize=5, horizontalalignment='right',**garamondFont)
+            ax.set_yticklabels(axisNames, fontsize=7, horizontalalignment='left',**garamondFont)
             ax.yaxis.set_tick_params(length=0)
-            plt.subplots_adjust(left=0.6, right=0.99, top=1, bottom=0.2)
             plt.tight_layout()
+            #plt.subplots_adjust(left=0.4, right=0.99)
+            
             finalFileName = curTime + saveFile
-            plt.savefig(img_file_path + finalFileName,dpi=1500, format=SaveFileType)
+            
+            
+            # defining size for landscape mode 
+            fig = plt.gcf()
+            
+            
+            
+            
+            
+            if(incr2<3):
+                height = 0.6 *  (incr2/1.5)
+            else:
+                if(incr2<5):
+                    height = 0.6 *  (incr2/1.8)
+                else:
+                    height = 0.6 *  (incr2/2.2)
+            
+            
+            fig.set_size_inches(6.5, height)
+            dpi = 591
+            
+            plt.savefig(img_file_path + finalFileName,dpi=dpi, format=SaveFileType,  transparent=True)
             print(str(incr) + " : " + finalFileName);
             incr = incr + 1
-            #plt.show()    
     except Exception as e:
         print("Something Went wrong at OK chart! Unable to process your request.")
         print(e)
