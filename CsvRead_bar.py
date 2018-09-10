@@ -24,10 +24,10 @@ def readData():
                 reader=csv.reader(file)
                 data=list(reader)				
                 for csvRow in data:
-                    #Auto increament	
-                    csvRowCount = csvRowCount + 1 		
                     axisNameValues.append(csvRow[4])
                     axisValues.append(csvRow[:4])
+                       
+                    csvRowCount = csvRowCount + 1
                 
                 finalArr['axisNameValues']=axisNameValues
                 finalArr['axisValues']=axisValues
