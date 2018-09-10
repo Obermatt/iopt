@@ -142,7 +142,6 @@ def cdaxGraph():
         print(e)
 
         
-SaveFileType = sys.argv[1] 
 
 showSyntax = False
 try:
