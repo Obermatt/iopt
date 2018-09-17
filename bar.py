@@ -29,7 +29,7 @@ def cdaxGraph():
         
         for ReadData in dataRead:
             saveinputFile = ReadData['fileName']
-            saveFile = "_bar_" + saveinputFile + "." + SaveFileType
+            saveFile = "_bar_" + saveinputFile + "_" + outputType + "." + SaveFileType
             now = datetime.datetime.now()
             curTime = now.strftime("%Y_%m_%d")
             
@@ -114,7 +114,11 @@ def cdaxGraph():
             ax.get_yticklabels()[0].set_color("#2e91ad")
             ax.yaxis.set_tick_params(length=0)
             plt.tight_layout()
-            #plt.subplots_adjust(left=0.4, right=0.99)
+            if outputType == "blog":
+                dpi = 385
+            else:
+                dpi = 591
+                plt.subplots_adjust(left=0.10, right=0.90)
             
             finalFileName = curTime + saveFile
             
@@ -132,7 +136,11 @@ def cdaxGraph():
             headerSpace = 0.3
             
             fig.set_size_inches(6.5, height+headerSpace)
-            dpi = 591
+            if outputType == "blog":
+                dpi = 385
+            else:
+                dpi = 591
+            
             
             plt.savefig(img_file_path + finalFileName,dpi=dpi, format=SaveFileType,  transparent=True)
             print(str(incr) + " : " + finalFileName);
@@ -142,24 +150,30 @@ def cdaxGraph():
         print(e)
 
         
-
+outputType = ""
 showSyntax = False
 try:
-	# svg or png
-	SaveFileType = sys.argv[1] 
+    # svg or png
+    SaveFileType = sys.argv[1]
+    
+    if sys.argv[0] == "bar.py":
+        outputType = sys.argv[2] 
 
 except Exception as e:
-	showSyntax=True
+    showSyntax=True
     
 if showSyntax==False:
-	if SaveFileType!="png" and SaveFileType!="svg":
-		showSyntax=True
+    if SaveFileType!="png" and SaveFileType!="svg":
+        showSyntax=True
+    if outputType!="video" and outputType!="blog":
+        outputType = "blog"
 
 if showSyntax==True:
-	print("Invalid param values")
-	print("Correct syntax is as follows:")
-	print("\t Parameters: <outputformat>")
-	print("\t\t output formats -- svg / png")
+    print("Invalid param values")
+    print("Correct syntax is as follows:")
+    print("\t Parameters: <outputformat>")
+    print("\t\t output formats -- svg / png")
+    print("\t\t output required for -- video / blog")
 else:
     print("\nBar graph file generation started:")
     cdaxGraph()
