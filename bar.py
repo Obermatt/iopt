@@ -116,6 +116,7 @@ def cdaxGraph():
             plt.tight_layout()
             if outputType == "blog":
                 dpi = 385
+                plt.subplots_adjust(left=0.01, right=1)
             else:
                 dpi = 591
                 plt.subplots_adjust(left=0.10, right=0.90)
