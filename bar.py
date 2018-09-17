@@ -76,7 +76,7 @@ def cdaxGraph():
 
                     if(incr2==0):
                         #adding title to the columns
-                        ax.annotate(m,xy=(x1-4,y1-3),color='#2e91ad', horizontalalignment='left',verticalalignment='bottom',fontsize=9, zorder=105,**garamondFont)	#converted values into percentage value	
+                        ax.annotate(m,xy=(x1-1.3,y1-3),color='#2e91ad', horizontalalignment='left',verticalalignment='bottom',fontsize=9, zorder=105,**garamondFont)	#converted values into percentage value	
                         rowStart = x2 + diffSpace
                     else:
                         m1 = np.nan if m is '' else int(round(float (m)))
@@ -100,7 +100,7 @@ def cdaxGraph():
                                     colorValue = "#6C8E40" #"green"
                         
                         plt.plot(x_new, y_new, color=colorValue,linewidth=10)  # Set plot final plot
-                        ax.annotate(m1,xy=(x1-2,y1-4),horizontalalignment='right',verticalalignment='bottom',fontsize=7, zorder=105,**garamondFont)	#converted values into percentage value	
+                        ax.annotate(m1,xy=(x1-2,y1-4),horizontalalignment='right',verticalalignment='bottom',fontsize=9, zorder=105,**garamondFont)	#converted values into percentage value	
                         rowStart = x2 + diffSpace
                     
                 incr2 = incr2+1
