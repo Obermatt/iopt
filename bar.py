@@ -76,7 +76,7 @@ def cdaxGraph():
 
                     if(incr2==0):
                         #adding title to the columns
-                        ax.annotate(m,xy=(x1-1.3,y1-3),color='#2e91ad', horizontalalignment='left',verticalalignment='bottom',fontsize=9, zorder=105,**garamondFont)	#converted values into percentage value	
+                        ax.annotate(m,xy=(x1-1.3,y1-3),color='#2e91ad', horizontalalignment='left',verticalalignment='bottom',fontsize=11, zorder=105,**garamondFont)	#converted values into percentage value	
                         rowStart = x2 + diffSpace
                     else:
                         m1 = np.nan if m is '' else int(round(float (m)))
@@ -100,7 +100,7 @@ def cdaxGraph():
                                     colorValue = "#6C8E40" #"green"
                         
                         plt.plot(x_new, y_new, color=colorValue,linewidth=10)  # Set plot final plot
-                        ax.annotate(m1,xy=(x1-2,y1-4),horizontalalignment='right',verticalalignment='bottom',fontsize=9, zorder=105,**garamondFont)	#converted values into percentage value	
+                        ax.annotate(m1,xy=(x1-2,y1-4),horizontalalignment='right',verticalalignment='bottom',fontsize=11, zorder=105,**garamondFont)	#converted values into percentage value	
                         rowStart = x2 + diffSpace
                     
                 incr2 = incr2+1
@@ -110,7 +110,7 @@ def cdaxGraph():
             ax.axis([0,102,barYValue-10,110])
             yax = ax.set_yticks(barValues)
             yax = ax.get_yticks()
-            ax.set_yticklabels(axisNames, fontsize=9, horizontalalignment='left',**garamondFont)
+            ax.set_yticklabels(axisNames, fontsize=11, horizontalalignment='left',**garamondFont)
             ax.get_yticklabels()[0].set_color("#2e91ad")
             ax.yaxis.set_tick_params(length=0)
             plt.tight_layout()
