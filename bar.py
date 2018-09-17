@@ -155,12 +155,17 @@ showSyntax = False
 try:
     # svg or png
     SaveFileType = sys.argv[1]
-    
+
+except Exception as e:
+    showSyntax=True
+
+try:    
     if sys.argv[0] == "bar.py":
         outputType = sys.argv[2] 
 
 except Exception as e:
-    showSyntax=True
+    outputType = "blog"
+
     
 if showSyntax==False:
     if SaveFileType!="png" and SaveFileType!="svg":
